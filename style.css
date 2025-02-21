@@ -78,7 +78,7 @@ select option:last-child {
     font-family: "Anton SC", serif;
     font-weight: 400;
     font-style: normal;
-    
+    color: white;
 }
 
 .nav-link{
@@ -89,7 +89,7 @@ select option:last-child {
    color:white;
 }
 
-.header{
-    background-image: linear-gradient(red, yellow);
+header{
+    background-image: linear-gradient(to right,#ED4690, #5522CC);
 
 }
