@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap'); 
+
+.date {
+    font-family: "DM Sans", serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    color: blue;
+}
+
+/* Ensure transition and hover effect */
+.card {
+    transition: all 0.3s ease-in-out; /* Smooth animation */
+}
+
+/* Stronger box shadow on hover */
+.card:hover {
+    transform: translateY(-5px); /* Moves the card up */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important; /* Stronger shadow */
+}
+
+
+.filter-dropdown {
+    background-color: #f5f6ff; /* Light blue background */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px; /* Makes buttons rounded */
+    color: #1a1b4b; /* Dark blue text */
+    font-weight: bold;
+}
+.filter-dropdown:focus {
+    box-shadow: none;
+}
+
+/* Style the select dropdown */
+select {
+    background-color: #f3e8ff; /* Light Purple */
+    color: #4a148c; /* Dark Purple Text */
+    border: 1px solid #d1c4e9; /* Soft Purple Border */
+    border-radius: 12px; /* More rounded corners */
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold; /* Make text bold */
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Style dropdown options */
+.options {
+    background-color: #f5f6ff; /* Medium Purple */
+    color: #4a148c; /* Dark Purple */
+    padding: 12px; /* More padding for spacing */
+    font-weight: bold; /* Make text bold */
+    border-bottom: 1px solid #ba68c8; /* Add partition line */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Add a hover effect for options */
+select option:hover {
+    background-color: #ce93d8; /* Brighter Purple */
+    color: white;
+}
+
+/* Make disabled option visually distinct */
+select option:disabled {
+    background-color: #d1c4e9; /* Lightest shade for disabled */
+    color: #9c27b0;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Remove border from last option to avoid extra partition */
+select option:last-child {
+    border-bottom: none;
+}
+
+.logo{
+    font-family: "Anton SC", serif;
+    font-weight: 400;
+    font-style: normal;
+    
+}
+
+.nav-link{
+    font-family: "DM Sans", serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+   color:white;
+}
+
+.header{
+    background-image: linear-gradient(red, yellow);
+
+}
