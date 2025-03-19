@@ -1,6 +1,20 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="style.css">
+<header class="d-flex flex-wrap justify-content-center py-5 mb-4 head">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+      <span class="fs-1 logo">Eventify</span>
+    </a>
+    <ul class="nav nav-pills">
+      <li class="nav-item header-buttons"><a href="#" class="nav-link">Events</a></li>
+      <li class="nav-item header-buttons"><a href="#" class="nav-link">Blog</a></li>
+      <li class="nav-item header-buttons"><a href="#" class="nav-link">About</a></li>
+      <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
+      <li class="nav-item header-buttons login"><a href="Webpages/register.php" class="nav-link">Register</a></li>
+    </ul>
+    </header>
+
 <div class="container mt-4">
     <div class="d-flex align-items-center justify-content-between py-5">
         <h2 class="fw-bold text-dark ">Upcoming Events</h2>
@@ -34,6 +48,8 @@
                 <option value="2">Technology</option>
                 <option value="3">Education</option>
             </select>
+
+            
         </div>
     </div>
 </div>
