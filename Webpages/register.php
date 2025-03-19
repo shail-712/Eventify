@@ -12,6 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = trim($_POST["name"]);
@@ -58,41 +59,96 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('images/image.png') no-repeat center center/cover;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            opacity: 0.85;
+        }
+
+        .container {
+            position: relative;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            width: 300px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        button {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #1e5bd3, #5419a9);
+        }
+    </style>
 </head>
-<body class="container mt-5">
-    <h2 class="mb-4">Register for Eventify</h2>
-    <form action="register.php" method="POST" class="w-50">
-        <div class="mb-3">
-            <label class="form-label">Full Name:</label>
-            <input type="text" name="name" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Email:</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Password:</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Phone Number:</label>
-            <input type="text" name="phone" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Role:</label>
-            <select name="role" class="form-select" required>
+<body>
+    <div class="container">
+        <h2>Register for Eventify</h2>
+        <form action="register.php" method="POST">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="phone" placeholder="Phone Number">
+            <select name="role" required>
+                <option value="" disabled selected>Select Role</option>
                 <option value="admin">Admin</option>
                 <option value="organizer">Organizer</option>
                 <option value="attendee">Attendee</option>
                 <option value="sponsor">Sponsor</option>
             </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
+            <button type="submit">Register</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -11,7 +11,7 @@
       <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
       <li class="nav-item header-buttons login"><a href="#" class="nav-link">Login</a></li>
     </ul>
-    </header>
+</header>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="../style.css">
