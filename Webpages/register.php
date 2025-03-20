@@ -12,6 +12,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Initialize message variable
+$message = "";
+$message_type = "";
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -19,13 +22,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
     $phone = trim($_POST["phone"]);
-    $role = $_POST["role"];
+    
+    // Set default role as "attendee" since dropdown was removed
+    $role = "attendee";
 
     // Validate required fields
-    if (empty($name) || empty($email) || empty($password) || empty($role)) {
-        echo "All fields are required.";
+    if (empty($name) || empty($email) || empty($password)) {
+        $message = "All fields are required.";
+        $message_type = "error";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "Invalid email format.";
+        $message = "Invalid email format.";
+        $message_type = "error";
     } else {
         // Hash password securely
         $password_hash = password_hash($password, PASSWORD_BCRYPT);
@@ -38,9 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("sssss", $name, $email, $password_hash, $phone, $role);
 
         if ($stmt->execute()) {
-            echo "Registration successful! You can now log in.";
+            $message = "Registration successful! You can now log in.";
+            $message_type = "success";
         } else {
-            echo "Error: " . $stmt->error;
+            $message = "Error: " . $stmt->error;
+            $message_type = "error";
         }
 
         // Close statement
@@ -101,7 +110,7 @@ $conn->close();
             font-weight: 700;
         }
 
-        input, select, button {
+        input, button {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
@@ -110,7 +119,7 @@ $conn->close();
             font-size: 16px;
         }
 
-        input, select {
+        input {
             background: rgba(255, 255, 255, 0.3);
             color: white;
         }
@@ -130,6 +139,39 @@ $conn->close();
         button:hover {
             background: linear-gradient(135deg, #1e5bd3, #5419a9);
         }
+
+        /* New styles for the message container */
+        .message-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 80%;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.85);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        .error-message {
+            background: rgba(244, 67, 54, 0.85);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
     </style>
 </head>
 <body>
@@ -140,15 +182,24 @@ $conn->close();
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
             <input type="text" name="phone" placeholder="Phone Number">
-            <select name="role" required>
-                <option value="" disabled selected>Select Role</option>
-                <option value="admin">Admin</option>
-                <option value="organizer">Organizer</option>
-                <option value="attendee">Attendee</option>
-                <option value="sponsor">Sponsor</option>
-            </select>
             <button type="submit">Register</button>
         </form>
     </div>
+
+    <?php if (!empty($message)): ?>
+    <div class="message-container <?php echo $message_type == 'success' ? 'success-message' : 'error-message'; ?>">
+        <?php echo $message; ?>
+    </div>
+
+    <script>
+        // Auto-hide the message after 5 seconds
+        setTimeout(function() {
+            document.querySelector('.message-container').style.opacity = '0';
+            setTimeout(function() {
+                document.querySelector('.message-container').style.display = 'none';
+            }, 500);
+        }, 5000);
+    </script>
+    <?php endif; ?>
 </body>
 </html>
