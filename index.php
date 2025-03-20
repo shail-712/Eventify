@@ -11,7 +11,7 @@
       <li class="nav-item header-buttons"><a href="#" class="nav-link">Blog</a></li>
       <li class="nav-item header-buttons"><a href="#" class="nav-link">About</a></li>
       <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
-      <li class="nav-item header-buttons login"><a href="Webpages/register.php" class="nav-link">Register</a></li>
+      <li class="nav-item header-buttons login"><a href="Webpages/login.php" class="nav-link">Login</a></li>
     </ul>
     </header>
 
@@ -305,7 +305,7 @@
                   
     </div>
     <div class="d-flex justify-content-center py-5">
-        <a href="Webpages/search_events.html"><button type="button" class="btn btn-outline-primary btn-lg px-4">View More</button>
+        <a href="Webpages/search_events.php"><button type="button" class="btn btn-outline-primary btn-lg px-4">View More</button>
         </a>
     </div>  
     </div>

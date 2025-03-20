@@ -18,40 +18,53 @@ $message_type = "";
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST["name"]);
     $email = trim($_POST["email"]);
     $password = $_POST["password"];
-    $phone = trim($_POST["phone"]);
-    
-    // Set default role as "attendee" since dropdown was removed
-    $role = "attendee";
 
     // Validate required fields
-    if (empty($name) || empty($email) || empty($password)) {
-        $message = "All fields are required.";
+    if (empty($email) || empty($password)) {
+        $message = "Email and password are required.";
         $message_type = "error";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = "Invalid email format.";
         $message_type = "error";
     } else {
-        // Hash password securely
-        $password_hash = password_hash($password, PASSWORD_BCRYPT);
-
-        // Insert user into database
-        $sql = "INSERT INTO Users (name, email, password_hash, phone_number, role) 
-                VALUES (?, ?, ?, ?, ?)";
-
+        // Retrieve user from database
+        $sql = "SELECT user_id, name, email, password_hash, role FROM Users WHERE email = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssss", $name, $email, $password_hash, $phone, $role);
-
-        if ($stmt->execute()) {
-            $message = "Registration successful! You can now log in.";
-            $message_type = "success";
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 1) {
+            $user = $result->fetch_assoc();
+            
+            // Verify password
+            if (password_verify($password, $user['password_hash'])) {
+                // Start session and store user information
+                session_start();
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_email'] = $user['email'];
+                $_SESSION['user_role'] = $user['role'];
+                
+                // Redirect based on role
+                // (In a real app, you'd redirect to different dashboards)
+                $message = "Login successful! Welcome, " . $user['name'] . "!";
+                $message_type = "success";
+                
+                // Uncomment to redirect after successful login
+                // header("Location: dashboard.php");
+                // exit();
+            } else {
+                $message = "Invalid email or password.";
+                $message_type = "error";
+            }
         } else {
-            $message = "Error: " . $stmt->error;
+            $message = "Invalid email or password.";
             $message_type = "error";
         }
-
+        
         // Close statement
         $stmt->close();
     }
@@ -66,7 +79,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
+    <title>Login - Eventify</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     
     <style>
@@ -139,23 +152,23 @@ $conn->close();
         button:hover {
             background: linear-gradient(135deg, #1e5bd3, #5419a9);
         }
-        
-        .login-link {
+
+        .register-link {
             margin-top: 15px;
             font-size: 14px;
         }
 
-        .login-link a {
+        .register-link a {
             color: white;
             text-decoration: underline;
             font-weight: 500;
         }
 
-        .login-link a:hover {
+        .register-link a:hover {
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* New styles for the message container */
+        /* Message container styles */
         .message-container {
             position: fixed;
             bottom: 30px;
@@ -191,16 +204,14 @@ $conn->close();
 </head>
 <body>
     <div class="container">
-        <h2>Register for Eventify</h2>
-        <form action="register.php" method="POST">
-            <input type="text" name="name" placeholder="Full Name" required>
+        <h2>Login to Eventify</h2>
+        <form action="login.php" method="POST">
             <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
-            <input type="text" name="phone" placeholder="Phone Number">
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
         </form>
-        <div class="login-link">
-            Already have an account? <a href="login.php">Login</a>
+        <div class="register-link">
+            Don't have an account? <a href="register.php">Register</a>
         </div>
     </div>
 

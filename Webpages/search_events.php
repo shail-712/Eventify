@@ -9,7 +9,7 @@
       <li class="nav-item header-buttons"><a href="#" class="nav-link">Blog</a></li>
       <li class="nav-item header-buttons"><a href="#" class="nav-link">About</a></li>
       <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
-      <li class="nav-item header-buttons login"><a href="#" class="nav-link">Login</a></li>
+      <li class="nav-item header-buttons login"><a href="login.php" class="nav-link">Login</a></li>
     </ul>
 </header>
 
