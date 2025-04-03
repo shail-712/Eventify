@@ -1,9 +1,91 @@
+<?php
+include '../config/database.php';
+
+// Get event ID from URL parameter
+$event_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+if ($event_id <= 0) {
+    // Redirect to events list if no valid ID provided
+    header('Location: search_events.php');
+    exit;
+}
+
+// Query to get event details with category name and organizer info
+$sql = "SELECT e.*, c.category_name, u.name as organizer_name, u.email as organizer_email, u.user_id as organizer_id
+        FROM Events e
+        JOIN EventCategories c ON e.category_id = c.category_id
+        JOIN Users u ON e.organizer_id = u.user_id
+        WHERE e.event_id = ?";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $event_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows == 0) {
+    // Event not found
+    header('Location: events.php');
+    exit;
+}
+
+$event = $result->fetch_assoc();
+
+// Get registration count
+$sql_reg_count = "SELECT COUNT(*) as count FROM event_registrations WHERE event_id = ?";
+$stmt_reg = $conn->prepare($sql_reg_count);
+$stmt_reg->bind_param("i", $event_id);
+$stmt_reg->execute();
+$reg_result = $stmt_reg->get_result();
+$reg_data = $reg_result->fetch_assoc();
+$registration_count = $reg_data['count'];
+
+// Get related events (same category, excluding current event)
+$sql_related = "SELECT e.*, c.category_name 
+                FROM Events e
+                JOIN EventCategories c ON e.category_id = c.category_id
+                WHERE e.category_id = ? AND e.event_id != ?
+                LIMIT 3";
+$stmt_related = $conn->prepare($sql_related);
+$stmt_related->bind_param("ii", $event['category_id'], $event_id);
+$stmt_related->execute();
+$related_result = $stmt_related->get_result();
+$related_events = [];
+
+while ($row = $related_result->fetch_assoc()) {
+    $related_events[] = $row;
+}
+
+// Helper functions
+function formatDate($datetime) {
+    return date('d M Y', strtotime($datetime));
+}
+
+function formatTime($datetime) {
+    return date('h:i A', strtotime($datetime));
+}
+
+function formatPrice($price) {
+    return '$' . number_format($price, 2);
+}
+
+function truncateText($text, $length) {
+    if (strlen($text) <= $length) {
+        return $text;
+    }
+    return substr($text, 0, $length) . '...';
+}
+
+// Check if user is logged in (placeholder - implement according to your auth system)
+$is_logged_in = false; // Replace with actual login check
+$current_user_id = 0; // Replace with actual user ID if logged in
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{event.title}} - Event Details</title>
+    <title><?php echo htmlspecialchars($event['title']); ?> - Event Details</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -82,24 +164,33 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">Event Platform</a>
+            <a class="navbar-brand" href="index.php">Eventify</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
+                        <a class="nav-link" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Events</a>
+                        <a class="nav-link" href="events.php">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Categories</a>
+                        <a class="nav-link" href="categories.php">Categories</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Login</a>
-                    </li>
+                    <?php if ($is_logged_in): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.php">My Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Login</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -108,9 +199,9 @@
     <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <span class="category-badge">{{event.category_name}}</span>
-            <h1 class="display-4 fw-bold">{{event.title}}</h1>
-            <p class="lead">Organized by {{organizer.name}}</p>
+            <span class="category-badge"><?php echo htmlspecialchars($event['category_name']); ?></span>
+            <h1 class="display-4 fw-bold"><?php echo htmlspecialchars($event['title']); ?></h1>
+            <p class="lead">Organized by <?php echo htmlspecialchars($event['organizer_name']); ?></p>
         </div>
     </section>
 
@@ -123,12 +214,12 @@
                     <div class="card-body">
                         <div class="event-location">
                             <i class="bi bi-geo-alt-fill"></i>
-                            <span>{{event.location}}</span>
+                            <span><?php echo htmlspecialchars($event['location']); ?></span>
                         </div>
                         
                         <h2 class="h4 mb-4">About this event</h2>
                         <div class="mb-4">
-                            {{event.description}}
+                            <?php echo nl2br(htmlspecialchars($event['description'])); ?>
                         </div>
                         
                         <h2 class="h4 mb-3">Event Features</h2>
@@ -178,29 +269,36 @@
                             <div class="col-6">
                                 <div class="event-meta-item p-3 text-center">
                                     <h5 class="fw-bold text-primary mb-2">Starts</h5>
-                                    <p class="mb-0">{{formatDate(event.start_time)}}</p>
-                                    <small class="text-muted">{{formatTime(event.start_time)}}</small>
+                                    <p class="mb-0"><?php echo formatDate($event['start_time']); ?></p>
+                                    <small class="text-muted"><?php echo formatTime($event['start_time']); ?></small>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="event-meta-item p-3 text-center">
                                     <h5 class="fw-bold text-primary mb-2">Ends</h5>
-                                    <p class="mb-0">{{formatDate(event.end_time)}}</p>
-                                    <small class="text-muted">{{formatTime(event.end_time)}}</small>
+                                    <p class="mb-0"><?php echo formatDate($event['end_time']); ?></p>
+                                    <small class="text-muted"><?php echo formatTime($event['end_time']); ?></small>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="text-center mb-4">
-                            <h3 class="display-6 fw-bold text-primary">{{formatPrice(event.ticket_price)}}</h3>
+                            <h3 class="display-6 fw-bold text-primary"><?php echo formatPrice($event['ticket_price']); ?></h3>
                         </div>
                         
                         <div class="d-grid mb-3">
-                            <button class="btn btn-lg primary-btn text-white" data-event-id="{{event.event_id}}">Register Now</button>
+                            <?php if ($is_logged_in): ?>
+                                <form action="process_registration.php" method="post">
+                                    <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                    <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+                                </form>
+                            <?php else: ?>
+                                <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
+                            <?php endif; ?>
                         </div>
                         
                         <div class="text-center">
-                            <p class="text-muted small mb-0">{{getRegistrationCount()}} people already registered</p>
+                            <p class="text-muted small mb-0"><?php echo $registration_count; ?> people already registered</p>
                         </div>
                     </div>
                 </div>
@@ -210,15 +308,15 @@
                     <div class="card-body">
                         <h4 class="card-title h5 mb-3">Organizer</h4>
                         <div class="d-flex align-items-center">
-                            <img src="/api/placeholder/60/60" alt="{{organizer.name}}" class="rounded-circle me-3" style="width: 60px; height: 60px;">
+                            <img src="images/organizers/<?php echo $event['organizer_id']; ?>.jpg" onerror="this.src='images/placeholder_user.jpg'" alt="<?php echo htmlspecialchars($event['organizer_name']); ?>" class="rounded-circle me-3" style="width: 60px; height: 60px;">
                             <div>
-                                <h5 class="mb-1">{{organizer.name}}</h5>
+                                <h5 class="mb-1"><?php echo htmlspecialchars($event['organizer_name']); ?></h5>
                                 <p class="text-muted mb-0 small">Event Organizer</p>
                             </div>
                         </div>
                         <hr>
                         <div class="d-grid">
-                            <button class="btn btn-outline-primary btn-sm">Contact Organizer</button>
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactOrganizerModal">Contact Organizer</button>
                         </div>
                     </div>
                 </div>
@@ -272,14 +370,23 @@
                         </div>
                     </div>
                     
+                    <?php if (!isset($_SESSION['user_id'])): ?>
                     <div class="text-center">
                         <p>Don't see the answer you're looking for? Ask a question</p>
-                        <div class="form-floating mb-3">
-                            <textarea class="form-control" id="questionTextarea" style="height: 100px"></textarea>
-                            <label for="questionTextarea">Your question</label>
-                        </div>
-                        <button class="btn primary-btn text-white">Submit Question</button>
+                        <form action="submit_question.php" method="post">
+                            <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="questionTextarea" name="question" style="height: 100px" required></textarea>
+                                <label for="questionTextarea">Your question</label>
+                            </div>
+                            <button type="submit" class="btn primary-btn text-white">Submit Question</button>
+                        </form>
                     </div>
+                    <?php else: ?>
+                    <div class="text-center">
+                        <p>Please <a href="login.php">login</a> to ask questions about this event.</p>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </section>
@@ -288,26 +395,31 @@
         <section class="mb-5">
             <h2 class="h3 mb-4">Similar Events</h2>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <!-- These would be populated dynamically based on category_id -->
-                {{#each relatedEvents}}
+                <?php foreach ($related_events as $rel_event): ?>
                 <div class="col">
                     <div class="card h-100 shadow-sm">
-                        <img src="/api/placeholder/400/200" class="card-img-top" alt="Event image">
+                        <img src="images/events/<?php echo $rel_event['event_id']; ?>.jpg" onerror="this.src='images/placeholder_event.jpg'" class="card-img-top" alt="Event image">
                         <div class="card-body">
-                            <span class="category-badge">{{this.category_name}}</span>
-                            <h5 class="card-title">{{this.title}}</h5>
-                            <p class="card-text">{{truncateText(this.description, 100)}}</p>
+                            <span class="category-badge"><?php echo htmlspecialchars($rel_event['category_name']); ?></span>
+                            <h5 class="card-title"><?php echo htmlspecialchars($rel_event['title']); ?></h5>
+                            <p class="card-text"><?php echo truncateText(htmlspecialchars($rel_event['description']), 100); ?></p>
                             <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">{{formatDate(this.start_time)}}</small>
-                                <span class="fw-bold">{{formatPrice(this.ticket_price)}}</span>
+                                <small class="text-muted"><?php echo formatDate($rel_event['start_time']); ?></small>
+                                <span class="fw-bold"><?php echo formatPrice($rel_event['ticket_price']); ?></span>
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
-                            <a href="/events/{{this.event_id}}" class="btn btn-outline-primary w-100">View Details</a>
+                            <a href="event.php?id=<?php echo $rel_event['event_id']; ?>" class="btn btn-outline-primary w-100">View Details</a>
                         </div>
                     </div>
                 </div>
-                {{/each}}
+                <?php endforeach; ?>
+                
+                <?php if (count($related_events) == 0): ?>
+                <div class="col-12">
+                    <p class="text-muted text-center">No similar events found at this time.</p>
+                </div>
+                <?php endif; ?>
             </div>
         </section>
     </div>
@@ -323,10 +435,10 @@
                 <div class="col-md-3 mb-3 mb-md-0">
                     <h5>Quick Links</h5>
                     <ul class="nav flex-column">
-                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Home</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Events</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Categories</a></li>
-                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0">Contact</a></li>
+                        <li class="nav-item"><a href="index.php" class="nav-link text-muted p-0 mb-2">Home</a></li>
+                        <li class="nav-item"><a href="events.php" class="nav-link text-muted p-0 mb-2">Events</a></li>
+                        <li class="nav-item"><a href="categories.php" class="nav-link text-muted p-0 mb-2">Categories</a></li>
+                        <li class="nav-item"><a href="contact.php" class="nav-link text-muted p-0">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
@@ -344,22 +456,56 @@
         </div>
     </footer>
 
+    <!-- Contact Organizer Modal -->
+    <div class="modal fade" id="contactOrganizerModal" tabindex="-1" aria-labelledby="contactOrganizerModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contactOrganizerModalLabel">Contact <?php echo htmlspecialchars($event['organizer_name']); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="send_message.php" method="post">
+                        <input type="hidden" name="organizer_id" value="<?php echo $event['organizer_id']; ?>">
+                        <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
+                        
+                        <div class="mb-3">
+                            <label for="message-subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="message-subject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="form-label">Message</label>
+                            <textarea class="form-control" id="message-text" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <?php if (!$is_logged_in): ?>
+                        <div class="mb-3">
+                            <label for="message-name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="message-name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-email" class="form-label">Your Email</label>
+                            <input type="email" class="form-control" id="message-email" name="email" required>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn primary-btn text-white">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Template Info: This is a placeholder for server-side template logic -->
-    <!-- 
-    Server-side functions needed:
-    - formatDate(date): Format date as DD Month YYYY
-    - formatTime(time): Format time as HH:MM AM/PM
-    - formatPrice(price): Format price with currency symbol
-    - truncateText(text, length): Truncate text to specified length with ellipsis
-    - getRegistrationCount(): Get count of registrations for this event
-    
-    Data context needed:
-    - event: Full event details from Events table
-    - organizer: User details of the organizer from Users table
-    - relatedEvents: Array of related events based on category
-    -->
 </body>
 </html>
+<?php
+// Close database connections
+$stmt->close();
+$stmt_reg->close();
+$stmt_related->close();
+$conn->close();
+?>
