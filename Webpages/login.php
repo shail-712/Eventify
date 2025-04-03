@@ -1,16 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "eventify";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include '../config/database.php';
 
 // Initialize message variable
 $message = "";
@@ -54,8 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $message_type = "success";
                 
                 // Uncomment to redirect after successful login
-                // header("Location: dashboard.php");
-                // exit();
+                header("Location: event-dashboard.php");
+                exit();
             } else {
                 $message = "Invalid email or password.";
                 $message_type = "error";
