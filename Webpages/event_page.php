@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFT Workshop - Learn How to Buy NFT in India</title>
+    <title>{{event.title}} - Event Details</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -55,29 +55,50 @@
         .accordion-button:focus {
             box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25);
         }
+        
+        .category-badge {
+            background-color: #6c5ce7;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .event-location {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .event-location i {
+            margin-right: 0.5rem;
+            color: #6c5ce7;
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">NFT Workshop</a>
+            <a class="navbar-brand" href="#">Event Platform</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
+                        <a class="nav-link" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
+                        <a class="nav-link" href="#">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#presenter">Presenter</a>
+                        <a class="nav-link" href="#">Categories</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#faq">FAQ</a>
+                        <a class="nav-link" href="#">Login</a>
                     </li>
                 </ul>
             </div>
@@ -87,25 +108,44 @@
     <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold">NFT Workshop</h1>
-            <p class="lead">Learn how to buy NFT in India. All about NFT marketplaces</p>
+            <span class="category-badge">{{event.category_name}}</span>
+            <h1 class="display-4 fw-bold">{{event.title}}</h1>
+            <p class="lead">Organized by {{organizer.name}}</p>
         </div>
     </section>
 
     <!-- Main Content -->
     <div class="container py-5">
-        <!-- Event Features -->
+        <!-- Event Details -->
         <div class="row mb-5">
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="card-title h4 mb-4">This event includes</h2>
-                        <div class="row g-3">
+                        <div class="event-location">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span>{{event.location}}</span>
+                        </div>
+                        
+                        <h2 class="h4 mb-4">About this event</h2>
+                        <div class="mb-4">
+                            {{event.description}}
+                        </div>
+                        
+                        <h2 class="h4 mb-3">Event Features</h2>
+                        <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <div class="card card-feature h-100">
                                     <div class="card-body text-center">
-                                        <i class="bi bi-person-video3 text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Direct interaction with the instructor</p>
+                                        <i class="bi bi-people text-primary mb-3" style="font-size: 2rem;"></i>
+                                        <p class="card-text">Network with like-minded individuals</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card card-feature h-100">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-camera-video text-primary mb-3" style="font-size: 2rem;"></i>
+                                        <p class="card-text">Session recording available afterwards</p>
                                     </div>
                                 </div>
                             </div>
@@ -120,16 +160,8 @@
                             <div class="col-md-6">
                                 <div class="card card-feature h-100">
                                     <div class="card-body text-center">
-                                        <i class="bi bi-camera-video text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Session recording after the workshop</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card card-feature h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-clock-history text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">1 hour live session</p>
+                                        <i class="bi bi-chat-dots text-primary mb-3" style="font-size: 2rem;"></i>
+                                        <p class="card-text">Interactive Q&A sessions</p>
                                     </div>
                                 </div>
                             </div>
@@ -138,90 +170,77 @@
                 </div>
             </div>
             
-            <!-- Event Details and Registration -->
-            <div class="col-lg-6">
+            <!-- Registration Sidebar -->
+            <div class="col-lg-4">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <div class="row g-3 mb-4">
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <div class="event-meta-item p-3 text-center">
-                                    <h5 class="fw-bold text-primary mb-2">Date</h5>
-                                    <p class="mb-0">25 Oct 2021</p>
+                                    <h5 class="fw-bold text-primary mb-2">Starts</h5>
+                                    <p class="mb-0">{{formatDate(event.start_time)}}</p>
+                                    <small class="text-muted">{{formatTime(event.start_time)}}</small>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <div class="event-meta-item p-3 text-center">
-                                    <h5 class="fw-bold text-primary mb-2">Time</h5>
-                                    <p class="mb-0">7:30 pm</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="event-meta-item p-3 text-center">
-                                    <h5 class="fw-bold text-primary mb-2">Duration</h5>
-                                    <p class="mb-0">60 min</p>
+                                    <h5 class="fw-bold text-primary mb-2">Ends</h5>
+                                    <p class="mb-0">{{formatDate(event.end_time)}}</p>
+                                    <small class="text-muted">{{formatTime(event.end_time)}}</small>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="text-center mb-4">
-                            <h3 class="display-6 fw-bold text-primary">Rs. 350</h3>
+                            <h3 class="display-6 fw-bold text-primary">{{formatPrice(event.ticket_price)}}</h3>
                         </div>
                         
+                        <div class="d-grid mb-3">
+                            <button class="btn btn-lg primary-btn text-white" data-event-id="{{event.event_id}}">Register Now</button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p class="text-muted small mb-0">{{getRegistrationCount()}} people already registered</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Organizer Info -->
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="card-title h5 mb-3">Organizer</h4>
+                        <div class="d-flex align-items-center">
+                            <img src="/api/placeholder/60/60" alt="{{organizer.name}}" class="rounded-circle me-3" style="width: 60px; height: 60px;">
+                            <div>
+                                <h5 class="mb-1">{{organizer.name}}</h5>
+                                <p class="text-muted mb-0 small">Event Organizer</p>
+                            </div>
+                        </div>
+                        <hr>
                         <div class="d-grid">
-                            <button class="btn btn-lg primary-btn text-white">Register Now</button>
+                            <button class="btn btn-outline-primary btn-sm">Contact Organizer</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Presenter Section -->
-        <section id="presenter" class="mb-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-4 text-center mb-4 mb-md-0">
-                            <img src="/api/placeholder/120/120" alt="Jane Doe" class="profile-img mb-3">
-                            <h3 class="h4">Jane Doe</h3>
-                            <p class="text-primary mb-1">@janedoe123</p>
-                        </div>
-                        <div class="col-md-8">
-                            <p class="lead">Modern Cubist abstract artist, NFT artist, Art educator & bridging the Contemporary with the Digital art realms</p>
-                            <button class="btn btn-outline-primary">Read More</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- About Section -->
-        <section id="about" class="mb-5">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h2 class="h3 mb-4">About the workshop</h2>
-                    <p>This workshop will provide knowledge about the Introduction to NFT and how to transition from traditional art into NFT. The creator will talk about new paradigm shift in artistic acceptance, and the future of digital art....</p>
-                    <button class="btn btn-outline-primary">Read More</button>
-                </div>
-            </div>
-        </section>
-        
         <!-- FAQ Section -->
         <section id="faq" class="mb-5">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="h3 text-center mb-4">Frequently Asked Questions</h2>
-                    <p class="text-center text-muted mb-4">FIND ALL YOUR ANSWERS RELATED TO THIS EVENT.</p>
                     
                     <div class="accordion mb-4" id="faqAccordion">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingOne">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
-                                    Who can participate in this workshop?
+                                    How can I attend this event?
                                 </button>
                             </h2>
                             <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Anyone interested in learning about NFTs and digital art can participate in this workshop. There are no specific prerequisites.
+                                    To attend this event, simply click the "Register Now" button and complete the checkout process. After registration, you'll receive a confirmation email with all the details.
                                 </div>
                             </div>
                         </div>
@@ -229,12 +248,12 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingTwo">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
-                                    Can I interact with the host at the workshop?
+                                    Can I get a refund if I can't attend?
                                 </button>
                             </h2>
                             <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    Yes, there will be direct interaction with the instructor during the live session.
+                                    Yes, refunds are available up to 48 hours before the event start time. After that, refunds are at the organizer's discretion.
                                 </div>
                             </div>
                         </div>
@@ -242,40 +261,53 @@
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingThree">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
-                                    What are the prerequisites for joining this workshop?
+                                    Will there be a recording available?
                                 </button>
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                                 <div class="accordion-body">
-                                    No specific prerequisites are needed. Basic understanding of digital art concepts would be helpful but not mandatory.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingFour">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
-                                    Is it pre-recorded or live workshop?
-                                </button>
-                            </h2>
-                            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body">
-                                    This is a live workshop. A recording will be provided to participants after the session.
+                                    Yes, all registered participants will receive access to a recording of the event within 24 hours after it concludes.
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="text-center">
-                        <p>Don't see the answer you're looking for? Post Your Question</p>
-                        <p class="text-muted mb-3">Your question might be answered by the host, speakers or GoSocial team</p>
+                        <p>Don't see the answer you're looking for? Ask a question</p>
                         <div class="form-floating mb-3">
                             <textarea class="form-control" id="questionTextarea" style="height: 100px"></textarea>
-                            <label for="questionTextarea">Please submit your questions</label>
+                            <label for="questionTextarea">Your question</label>
                         </div>
-                        <button class="btn primary-btn text-white">Post</button>
+                        <button class="btn primary-btn text-white">Submit Question</button>
                     </div>
                 </div>
+            </div>
+        </section>
+        
+        <!-- Related Events -->
+        <section class="mb-5">
+            <h2 class="h3 mb-4">Similar Events</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <!-- These would be populated dynamically based on category_id -->
+                {{#each relatedEvents}}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="/api/placeholder/400/200" class="card-img-top" alt="Event image">
+                        <div class="card-body">
+                            <span class="category-badge">{{this.category_name}}</span>
+                            <h5 class="card-title">{{this.title}}</h5>
+                            <p class="card-text">{{truncateText(this.description, 100)}}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{formatDate(this.start_time)}}</small>
+                                <span class="fw-bold">{{formatPrice(this.ticket_price)}}</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0">
+                            <a href="/events/{{this.event_id}}" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
             </div>
         </section>
     </div>
@@ -285,34 +317,49 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 mb-3 mb-md-0">
-                    <h5>NFT Workshop</h5>
-                    <p class="text-muted">Learn how to buy NFT in India. All about NFT marketplaces</p>
+                    <h5>Event Platform</h5>
+                    <p class="text-muted">Find and register for events that match your interests</p>
                 </div>
                 <div class="col-md-3 mb-3 mb-md-0">
-                    <h5>Links</h5>
+                    <h5>Quick Links</h5>
                     <ul class="nav flex-column">
                         <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Home</a></li>
-                        <li class="nav-item"><a href="#about" class="nav-link text-muted p-0 mb-2">About</a></li>
-                        <li class="nav-item"><a href="#presenter" class="nav-link text-muted p-0 mb-2">Presenter</a></li>
-                        <li class="nav-item"><a href="#faq" class="nav-link text-muted p-0">FAQ</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Events</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0 mb-2">Categories</a></li>
+                        <li class="nav-item"><a href="#" class="nav-link text-muted p-0">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-md-3">
                     <h5>Contact</h5>
                     <ul class="nav flex-column">
-                        <li class="nav-item text-muted mb-2"><i class="bi bi-envelope me-2"></i>info@nftworkshop.com</li>
-                        <li class="nav-item text-muted"><i class="bi bi-telephone me-2"></i>+91 9876543210</li>
+                        <li class="nav-item text-muted mb-2"><i class="bi bi-envelope me-2"></i>info@eventplatform.com</li>
+                        <li class="nav-item text-muted"><i class="bi bi-telephone me-2"></i>+1 234 567 8900</li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
             <div class="text-center text-muted">
-                <p>&copy; 2021 NFT Workshop. All rights reserved.</p>
+                <p>&copy; 2025 Event Platform. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Template Info: This is a placeholder for server-side template logic -->
+    <!-- 
+    Server-side functions needed:
+    - formatDate(date): Format date as DD Month YYYY
+    - formatTime(time): Format time as HH:MM AM/PM
+    - formatPrice(price): Format price with currency symbol
+    - truncateText(text, length): Truncate text to specified length with ellipsis
+    - getRegistrationCount(): Get count of registrations for this event
+    
+    Data context needed:
+    - event: Full event details from Events table
+    - organizer: User details of the organizer from Users table
+    - relatedEvents: Array of related events based on category
+    -->
 </body>
 </html>
