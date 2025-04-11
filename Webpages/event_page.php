@@ -31,13 +31,36 @@ if ($result->num_rows == 0) {
 $event = $result->fetch_assoc();
 
 // Get registration count
-$sql_reg_count = "SELECT COUNT(*) as count FROM event_registrations WHERE event_id = ?";
+$sql_reg_count = "SELECT COUNT(*) as count FROM EventRegistrations WHERE event_id = ?";
 $stmt_reg = $conn->prepare($sql_reg_count);
 $stmt_reg->bind_param("i", $event_id);
 $stmt_reg->execute();
 $reg_result = $stmt_reg->get_result();
 $reg_data = $reg_result->fetch_assoc();
 $registration_count = $reg_data['count'];
+
+// Get reviews for this event
+$sql_reviews = "SELECT r.*, u.name as reviewer_name, u.profile_image
+                FROM Reviews r
+                JOIN Users u ON r.user_id = u.user_id
+                WHERE r.event_id = ?
+                ORDER BY r.review_date DESC";
+$stmt_reviews = $conn->prepare($sql_reviews);
+$stmt_reviews->bind_param("i", $event_id);
+$stmt_reviews->execute();
+$reviews_result = $stmt_reviews->get_result();
+$reviews = [];
+$total_rating = 0;
+$review_count = 0;
+
+while ($row = $reviews_result->fetch_assoc()) {
+    $reviews[] = $row;
+    $total_rating += $row['rating'];
+    $review_count++;
+}
+
+// Calculate average rating
+$average_rating = $review_count > 0 ? round($total_rating / $review_count, 1) : 0;
 
 // Get related events (same category, excluding current event)
 $sql_related = "SELECT e.*, c.category_name 
@@ -53,6 +76,34 @@ $related_events = [];
 
 while ($row = $related_result->fetch_assoc()) {
     $related_events[] = $row;
+}
+
+// Check if user is logged in
+session_start();
+$is_logged_in = isset($_SESSION['user_id']);
+$current_user_id = $is_logged_in ? $_SESSION['user_id'] : 0;
+
+// Check if the user has attended this event
+$has_attended = false;
+if ($is_logged_in) {
+    $sql_attendance = "SELECT COUNT(*) as count FROM EventRegistrations 
+                       WHERE user_id = ? AND event_id = ?";
+    $stmt_attendance = $conn->prepare($sql_attendance);
+    $stmt_attendance->bind_param("ii", $current_user_id, $event_id);
+    $stmt_attendance->execute();
+    $attendance_result = $stmt_attendance->get_result();
+    $attendance_data = $attendance_result->fetch_assoc();
+    $has_attended = ($attendance_data['count'] > 0);
+    
+    // Check if user has already submitted a review
+    $sql_user_review = "SELECT COUNT(*) as count FROM Reviews 
+                       WHERE user_id = ? AND event_id = ?";
+    $stmt_user_review = $conn->prepare($sql_user_review);
+    $stmt_user_review->bind_param("ii", $current_user_id, $event_id);
+    $stmt_user_review->execute();
+    $user_review_result = $stmt_user_review->get_result();
+    $user_review_data = $user_review_result->fetch_assoc();
+    $has_reviewed = ($user_review_data['count'] > 0);
 }
 
 // Helper functions
@@ -75,9 +126,22 @@ function truncateText($text, $length) {
     return substr($text, 0, $length) . '...';
 }
 
-// Check if user is logged in (placeholder - implement according to your auth system)
-$is_logged_in = false; // Replace with actual login check
-$current_user_id = 0; // Replace with actual user ID if logged in
+function displayStarRating($rating) {
+    $output = '';
+    for ($i = 1; $i <= 5; $i++) {
+        if ($i <= $rating) {
+            $output .= '<i class="bi bi-star-fill text-warning"></i>';
+        } else {
+            $output .= '<i class="bi bi-star text-warning"></i>';
+        }
+    }
+    return $output;
+}
+
+// Format review date
+function formatReviewDate($date) {
+    return date('M d, Y', strtotime($date));
+}
 
 ?>
 <!DOCTYPE html>
@@ -158,20 +222,53 @@ $current_user_id = 0; // Replace with actual user ID if logged in
             margin-right: 0.5rem;
             color: #6c5ce7;
         }
+        
+        .review-avatar {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .review-card {
+            border-left: 4px solid #6c5ce7;
+            margin-bottom: 1rem;
+        }
+        
+        .rating-container {
+            font-size: 1.5rem;
+        }
+        
+        .rating-input {
+            display: none;
+        }
+        
+        .rating-label {
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0 0.1rem;
+        }
+        
+        .rating-label:hover,
+        .rating-label:hover ~ .rating-label,
+        .rating-input:checked ~ .rating-label {
+            color: #ffcc00;
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Eventify</a>
+            <a class="navbar-brand" href="../index.php">Eventify</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
+                        <a class="nav-link" href="../index.php">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="events.php">Events</a>
@@ -202,6 +299,14 @@ $current_user_id = 0; // Replace with actual user ID if logged in
             <span class="category-badge"><?php echo htmlspecialchars($event['category_name']); ?></span>
             <h1 class="display-4 fw-bold"><?php echo htmlspecialchars($event['title']); ?></h1>
             <p class="lead">Organized by <?php echo htmlspecialchars($event['organizer_name']); ?></p>
+            <?php if ($review_count > 0): ?>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="text-warning me-2">
+                    <?php echo displayStarRating($average_rating); ?>
+                </div>
+                <span class="text-white"><?php echo $average_rating; ?> (<?php echo $review_count; ?> reviews)</span>
+            </div>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -222,41 +327,91 @@ $current_user_id = 0; // Replace with actual user ID if logged in
                             <?php echo nl2br(htmlspecialchars($event['description'])); ?>
                         </div>
                         
-                        <h2 class="h4 mb-3">Event Features</h2>
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <div class="card card-feature h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-people text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Network with like-minded individuals</p>
+                        <!-- Event Reviews Section -->
+                        <h2 class="h4 mb-3">Event Reviews</h2>
+                        
+                        <?php if ($review_count > 0): ?>
+                            <?php foreach ($reviews as $review): ?>
+                            <div class="card review-card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex mb-3">
+                                        <img src="images/users/<?php echo $review['user_id']; ?>.jpg" 
+                                             onerror="this.src='images/placeholder_user.jpg'" 
+                                             alt="<?php echo htmlspecialchars($review['reviewer_name']); ?>" 
+                                             class="review-avatar me-3">
+                                        <div>
+                                            <h5 class="mb-0"><?php echo htmlspecialchars($review['reviewer_name']); ?></h5>
+                                            <div class="text-warning">
+                                                <?php echo displayStarRating($review['rating']); ?>
+                                            </div>
+                                            <small class="text-muted"><?php echo formatReviewDate($review['review_date']); ?></small>
+                                        </div>
                                     </div>
+                                    <p class="mb-0"><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-feature h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-camera-video text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Session recording available afterwards</p>
-                                    </div>
-                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>No reviews yet for this event. Be the first to review!
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-feature h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-device-hdd text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Access on mobile and web</p>
-                                    </div>
-                                </div>
+                        <?php endif; ?>
+                        
+                        <!-- Review Form -->
+                        <?php if ($is_logged_in && $has_attended && !isset($has_reviewed)): ?>
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Share your experience</h5>
                             </div>
-                            <div class="col-md-6">
-                                <div class="card card-feature h-100">
-                                    <div class="card-body text-center">
-                                        <i class="bi bi-chat-dots text-primary mb-3" style="font-size: 2rem;"></i>
-                                        <p class="card-text">Interactive Q&A sessions</p>
+                            <div class="card-body">
+                                <form action="submit_review.php" method="post">
+                                    <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating</label>
+                                        <div class="rating-container">
+                                            <input type="radio" id="star5" name="rating" value="5" class="rating-input">
+                                            <label for="star5" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            
+                                            <input type="radio" id="star4" name="rating" value="4" class="rating-input">
+                                            <label for="star4" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            
+                                            <input type="radio" id="star3" name="rating" value="3" class="rating-input">
+                                            <label for="star3" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            
+                                            <input type="radio" id="star2" name="rating" value="2" class="rating-input">
+                                            <label for="star2" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            
+                                            <input type="radio" id="star1" name="rating" value="1" class="rating-input">
+                                            <label for="star1" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                        </div>
                                     </div>
-                                </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="reviewComment" class="form-label">Your Review</label>
+                                        <textarea class="form-control" id="reviewComment" name="comment" rows="4" required></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn primary-btn text-white">Submit Review</button>
+                                </form>
                             </div>
                         </div>
+                        <?php elseif ($is_logged_in && isset($has_reviewed) && $has_reviewed): ?>
+                        <div class="alert alert-success mt-4">
+                            <i class="bi bi-check-circle me-2"></i>Thank you for reviewing this event!
+                        </div>
+                        <?php elseif ($is_logged_in && !$has_attended): ?>
+                        <div class="alert alert-info mt-4">
+                            <i class="bi bi-info-circle me-2"></i>You need to attend this event before you can review it.
+                        </div>
+                        <?php elseif (!$is_logged_in): ?>
+                        <div class="card mt-4">
+                            <div class="card-body text-center">
+                                <p class="mb-2">Want to share your experience?</p>
+                                <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-outline-primary">Login to Leave a Review</a>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -500,12 +655,34 @@ $current_user_id = 0; // Replace with actual user ID if logged in
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript for Star Rating -->
+    <script>
+        // Reverse the star rating labels to show in the correct order
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingContainer = document.querySelector('.rating-container');
+            if (ratingContainer) {
+                const stars = Array.from(ratingContainer.querySelectorAll('.rating-label'));
+                stars.reverse();
+                
+                // Adjust the display to show in reverse order
+                ratingContainer.innerHTML = '';
+                stars.forEach(star => {
+                    ratingContainer.appendChild(star.previousElementSibling); // Add input
+                    ratingContainer.appendChild(star); // Add label
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 <?php
 // Close database connections
 $stmt->close();
 $stmt_reg->close();
+$stmt_reviews->close();
 $stmt_related->close();
+if (isset($stmt_attendance)) $stmt_attendance->close();
+if (isset($stmt_user_review)) $stmt_user_review->close();
 $conn->close();
 ?>
