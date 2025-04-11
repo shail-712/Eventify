@@ -14,6 +14,90 @@
       <li class="nav-item header-buttons login"><a href="Webpages/login.php" class="nav-link">Login</a></li>
     </ul>
     </header>
+<!-- Hero Section -->
+<section class="hero-section text-white text-center d-flex align-items-center justify-content-center">
+  <div class="hero-overlay"></div>
+  <div class="container position-relative z-2">
+    <h1 class="display-5 fw-bold fade-in">Bringing People Together, One Event at a Time!</h1>
+    <p class="lead fw-semibold mt-3 fade-in delay-1">Discover, organize, and attend unforgettable events that connect communities and inspire moments.</p>
+    <a href="#" class="btn btn-danger btn-lg mt-4 px-5 py-2 fade-in delay-2">Join Now!</a>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    background: url('images/image.png') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(6px); /* Blurs the image */
+    background: linear-gradient(to right, rgba(213, 76, 163, 0.7), rgba(91, 0, 219, 0.7));
+    z-index: 1;
+  }
+
+  .hero-section .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Animations */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .delay-1 {
+    animation-delay: 0.3s;
+  }
+
+  .delay-2 {
+    animation-delay: 0.6s;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>
+
+
+<!-- Search Bar -->
+<section class="bg-dark text-white py-4">
+  <div class="container">
+    <form class="row g-3 justify-content-center align-items-center">
+      <div class="col-md-3">
+        <label for="searchEvent" class="form-label">Search Event</label>
+        <input type="text" class="form-control" id="searchEvent" placeholder="Concert">
+      </div>
+      <div class="col-md-3">
+        <label for="place" class="form-label">Place</label>
+        <input type="text" class="form-control" id="place" placeholder="Mumbai">
+      </div>
+      <div class="col-md-3">
+        <label for="time" class="form-label">Time</label>
+        <select class="form-select" id="time">
+          <option selected>Any date</option>
+          <option value="1">Today</option>
+          <option value="2">This Week</option>
+          <option value="3">This Month</option>
+        </select>
+      </div>
+    </form>
+  </div>
+</section>
+
 
 <div class="container mt-4">
     <div class="d-flex align-items-center justify-content-between py-5">
