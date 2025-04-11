@@ -1,96 +1,189 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap'); 
 
-.date {
-    font-family: "DM Sans", serif;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    color: blue;
+/* Global Styles */
+body {
+  margin: 0;
+  padding: 0;
 }
 
-/* Ensure transition and hover effect */
+/* Hero Wrapper Styles */
+.hero-wrapper {
+  position: relative;
+  background: url('images/image.png') no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* Hero Wrapper Styles */
+.hero-wrapper {
+    position: relative;
+    background: url('images/image.png') no-repeat center center;
+    background-size: cover;
+    overflow: hidden;
+  }
+  
+  .hero-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(to right, rgba(213, 76, 163, 0.7), rgba(91, 0, 219, 0.7));
+    z-index: 1;
+  }
+  
+  .hero-wrapper header, 
+  .hero-wrapper .hero-section {
+    position: relative;
+    z-index: 2;
+  }
+
+/* Navigation Styles */
+.nav-pills .nav-item .nav-link {
+  border-radius: 50px;  
+  border: 2px solid white;  
+  margin: 0 5px; 
+  padding: 8px 20px; 
+  color: white; 
+}
+
+.nav-pills .login .nav-link {
+  background-color: white;
+  color: purple;
+}
+
+.nav-pills .nav-item .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);  
+}
+
+.nav {
+  align-items: center; 
+}
+
+/* Header Styles */
+.head {
+  margin-bottom: 0 !important;
+}
+
+/* Logo Styles */
+.logo {
+  font-family: "Anton SC", serif;
+  font-weight: 400;
+  font-style: normal;
+  color: white;
+}
+
+/* Nav Link Styles */
+.nav-link {
+  font-family: "DM Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  color: white;
+}
+
+/* Hero Section Styles */
+.hero-section {
+  min-height: 80vh;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 1s ease forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.3s;
+}
+
+.delay-2 {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card Styles */
 .card {
-    transition: all 0.3s ease-in-out; /* Smooth animation */
+  transition: all 0.3s ease-in-out;
 }
 
-/* Stronger box shadow on hover */
-.card:hover {
-    transform: translateY(-5px); /* Moves the card up */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important; /* Stronger shadow */
+.hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
 }
 
+/* Date Display */
+.date {
+  font-family: "DM Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 800;
+  color: blue;
+}
 
+/* Filter Dropdowns */
 .filter-dropdown {
-    background-color: #f5f6ff; /* Light blue background */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px; /* Makes buttons rounded */
-    color: #1a1b4b; /* Dark blue text */
-    font-weight: bold;
+  background-color: #f5f6ff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  color: #1a1b4b;
+  font-weight: bold;
 }
+
 .filter-dropdown:focus {
-    box-shadow: none;
+  box-shadow: none;
 }
 
-/* Style the select dropdown */
+/* Select Styles */
 select {
-    background-color: #f3e8ff; /* Light Purple */
-    color: #4a148c; /* Dark Purple Text */
-    border: 1px solid #d1c4e9; /* Soft Purple Border */
-    border-radius: 12px; /* More rounded corners */
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold; /* Make text bold */
-    cursor: pointer;
-    outline: none;
-    transition: all 0.3s ease-in-out;
+  background-color: #f3e8ff;
+  color: #4a148c;
+  border: 1px solid #d1c4e9;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Style dropdown options */
+/* Options Styles */
 .options {
-    background-color: #f5f6ff; /* Medium Purple */
-    color: #4a148c; /* Dark Purple */
-    padding: 12px; /* More padding for spacing */
-    font-weight: bold; /* Make text bold */
-    border-bottom: 1px solid #ba68c8; /* Add partition line */
-    transition: all 0.3s ease-in-out;
+  background-color: #f5f6ff;
+  color: #4a148c;
+  padding: 12px;
+  font-weight: bold;
+  border-bottom: 1px solid #ba68c8;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Add a hover effect for options */
+/* Hover Effect for Options */
 select option:hover {
-    background-color: #ce93d8; /* Brighter Purple */
-    color: white;
+  background-color: #ce93d8;
+  color: white;
 }
 
-/* Make disabled option visually distinct */
+/* Disabled Option Styles */
 select option:disabled {
-    background-color: #d1c4e9; /* Lightest shade for disabled */
-    color: #9c27b0;
-    font-weight: bold;
-    text-transform: uppercase;
+  background-color: #d1c4e9;
+  color: #9c27b0;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-/* Remove border from last option to avoid extra partition */
+/* Remove Border from Last Option */
 select option:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
-
-.logo{
-    font-family: "Anton SC", serif;
-    font-weight: 400;
-    font-style: normal;
-    color: white;
-}
-
-.nav-link{
-    font-family: "DM Sans", serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    font-style: normal;
-   color:white;
-}
-
-header{
-    background-image: linear-gradient(to right,#ED4690, #5522CC);
-
-}
-

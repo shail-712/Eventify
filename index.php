@@ -14,6 +14,30 @@
       <li class="nav-item header-buttons login"><a href="Webpages/login.php" class="nav-link">Login</a></li>
     </ul>
     </header>
+
+<style>
+    .nav-pills .nav-item .nav-link {
+  border-radius: 50px;  
+  border: 2px solid white;  
+  margin: 0 5px; 
+  padding: 8px 20px; 
+  color: white; 
+}
+
+.nav-pills .login .nav-link {
+  background-color: white;
+  color: purple;
+}
+
+.nav-pills .nav-item .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2);  /* Slight white background on hover */
+}
+
+.nav {
+  align-items: center;  /* This will center the nav items vertically */
+}
+</style>
+
 <!-- Hero Section -->
 <section class="hero-section text-white text-center d-flex align-items-center justify-content-center">
   <div class="hero-overlay"></div>
