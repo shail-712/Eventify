@@ -145,6 +145,9 @@ $all_events_result = $conn->query($all_events_query);
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php">Logout</a>
                         </li>
+                        <li class="nav-item">
+                        <a href="attendance.php" class="nav-link">Manage Attendance</a>
+                        </li>
                     </ul>
                 </div>
             </nav>
