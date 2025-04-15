@@ -21,7 +21,7 @@ $user = $user_result->fetch_assoc();
 // Fetch upcoming event count
 $upcoming_events_query = "
     SELECT COUNT(*) as event_count 
-    FROM event_registrations er
+    FROM eventregistrations er
     JOIN events e ON er.event_id = e.event_id
     WHERE er.user_id = ? AND e.start_time >= CURDATE()
 ";
@@ -47,7 +47,7 @@ $joined_events_query = "
         t.ticket_type,
         COUNT(DISTINCT t.ticket_id) AS ticket_count
     FROM 
-        event_registrations er
+        eventregistrations er
     JOIN events e ON er.event_id = e.event_id
     LEFT JOIN EventCategories ec ON e.category_id = ec.category_id
     LEFT JOIN Tickets t ON t.event_id = e.event_id AND t.attendee_id = er.user_id
@@ -77,7 +77,7 @@ $all_events_query = "
     FROM 
         events e
     LEFT JOIN EventCategories ec ON e.category_id = ec.category_id
-    LEFT JOIN event_registrations er ON e.event_id = er.event_id
+    LEFT JOIN eventregistrations er ON e.event_id = er.event_id
     WHERE 
         e.start_time >= CURDATE()
     GROUP BY 
@@ -176,7 +176,7 @@ $all_events_result = $conn->query($all_events_query);
                             $next_event_query = "
                                 SELECT title, start_time 
                                 FROM events e
-                                JOIN event_registrations er ON e.event_id = er.event_id
+                                JOIN eventregistrations er ON e.event_id = er.event_id
                                 WHERE er.user_id = ? AND e.start_time >= CURDATE()
                                 ORDER BY e.start_time ASC
                                 LIMIT 1
