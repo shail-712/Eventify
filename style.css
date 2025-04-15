@@ -14,31 +14,23 @@ body {
   overflow: hidden;
 }
 
-/* Hero Wrapper Styles */
-.hero-wrapper {
-    position: relative;
-    background: url('images/image.png') no-repeat center center;
-    background-size: cover;
-    overflow: hidden;
-  }
-  
-  .hero-wrapper::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(6px);
-    background: linear-gradient(to right, rgba(213, 76, 163, 0.7), rgba(91, 0, 219, 0.7));
-    z-index: 1;
-  }
-  
-  .hero-wrapper header, 
-  .hero-wrapper .hero-section {
-    position: relative;
-    z-index: 2;
-  }
+.hero-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: linear-gradient(to right, rgba(213, 76, 163, 0.7), rgba(91, 0, 219, 0.7));
+  z-index: 1;
+}
+
+.hero-wrapper header, 
+.hero-wrapper .hero-section {
+  position: relative;
+  z-index: 2;
+}
 
 /* Navigation Styles */
 .nav-pills .nav-item .nav-link {

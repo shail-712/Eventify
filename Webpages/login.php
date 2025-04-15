@@ -37,12 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_email'] = $user['email'];
                 $_SESSION['user_role'] = $user['role'];
                 
+                // Add these two critical session variables to match what your event pages expect
+                $_SESSION['loggedin'] = true;
+                $_SESSION['role'] = $user['role'];
+                
                 // Redirect based on role
-                // (In a real app, you'd redirect to different dashboards)
                 $message = "Login successful! Welcome, " . $user['name'] . "!";
                 $message_type = "success";
                 
-                // Uncomment to redirect after successful login
+                // Redirect after successful login
                 header("Location: event-dashboard.php");
                 exit();
             } else {
