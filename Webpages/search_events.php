@@ -1,6 +1,6 @@
 <?php
 include '../config/database.php';
-
+session_start();
 // Query to fetch events with category and organizer information
 $sql = "SELECT e.*, c.category_name, u.name as organizer_name 
         FROM Events e
@@ -8,6 +8,7 @@ $sql = "SELECT e.*, c.category_name, u.name as organizer_name
         LEFT JOIN Users u ON e.organizer_id = u.user_id
         ORDER BY e.start_time ASC";
 $result = $conn->query($sql);
+$is_logged_in = isset($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
@@ -37,19 +38,36 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
-    <header class="d-flex flex-wrap justify-content-center py-5 mb-4 head">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-          <span class="fs-1 logo">Eventify</span>
-        </a>
-        <ul class="nav nav-pills">
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Events</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Blog</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">About</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
-          <li class="nav-item header-buttons login"><a href="login.php" class="nav-link">Login</a></li>
-        </ul>
-    </header>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="../index.php">Eventify</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="search_events.php">Events</a>
+                    </li>
+                    <?php if ($is_logged_in): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.php">My Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Login</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <div class="container mt-4">
         <div class="d-flex align-items-center justify-content-between py-5">

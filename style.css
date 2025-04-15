@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap'); 
+@import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 /* Global Styles */
 body {
@@ -26,7 +26,7 @@ body {
   z-index: 1;
 }
 
-.hero-wrapper header, 
+.hero-wrapper header,
 .hero-wrapper .hero-section {
   position: relative;
   z-index: 2;
@@ -36,9 +36,9 @@ body {
 .nav-pills .nav-item .nav-link {
   border-radius: 50px;  
   border: 2px solid white;  
-  margin: 0 5px; 
-  padding: 8px 20px; 
-  color: white; 
+  margin: 0 5px;
+  padding: 8px 20px;
+  color: white;
 }
 
 .nav-pills .login .nav-link {
@@ -51,7 +51,7 @@ body {
 }
 
 .nav {
-  align-items: center; 
+  align-items: center;
 }
 
 /* Header Styles */
@@ -78,9 +78,16 @@ body {
 
 /* Hero Section Styles */
 .hero-section {
+  position: relative;
   min-height: 80vh;
   margin-top: 0;
   padding-top: 0;
+  overflow: hidden;
+}
+
+.hero-section .container {
+  position: relative;
+  z-index: 2;
 }
 
 /* Animations */
@@ -178,4 +185,34 @@ select option:disabled {
 /* Remove Border from Last Option */
 select option:last-child {
   border-bottom: none;
+}
+
+.search-container {
+  background-color: #212529; /* Keep the black background */
+  border-radius: 50px; /* This creates the capsule shape */
+  max-width: 1000px; /* Adjust based on your preference */
+  margin: 20px auto; /* Centers horizontally and adds some vertical spacing */
+  padding: 20px 40px; /* Add padding inside the capsule */
+}
+
+/* You might want to adjust the parent section */
+.search-section {
+  background-color: transparent !important; /* Remove the full-width background */
+  padding: 20px 0;
+}
+
+.search-form-container {
+  background-color: #212529; /* Black background */
+  border-radius: 50px; /* Capsule shape */
+  max-width: 1000px; /* Adjust based on your preference */
+  margin: 0 auto; /* Center horizontally */
+  padding: 20px 30px; /* Padding inside the capsule */
+  position: relative;
+  top: -30px; /* This will pull it up to overlap with the purple gradient */
+}
+
+/* Optional: style the form inputs to have rounded corners too */
+.search-form-container .form-control,
+.search-form-container .form-select {
+  border-radius: 20px;
 }
