@@ -121,8 +121,4 @@ foreach ($tables as $table) {
     }
 }
 
-echo "Database setup completed successfully!";
-
-// Close connection
-$conn->close();
 ?>
