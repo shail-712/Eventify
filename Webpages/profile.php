@@ -14,6 +14,9 @@ $successMessage = '';
 $errorMessage = '';
 $editMode = isset($_GET['edit']) && $_GET['edit'] == 'true';
 
+// Define default profile image path
+$defaultProfileImage = "../images/default-pfp.png";
+
 // Fetch user data
 $sql = "SELECT * FROM Users WHERE user_id = ?";
 $stmt = $conn->prepare($sql);
@@ -46,9 +49,15 @@ if (isset($_POST['update_profile'])) {
     if ($checkResult->num_rows > 0) {
         $errorMessage = "Email is already in use by another account.";
     } else {
-        // Process profile image if uploaded
-        $profile_image = $userData['profile_image']; // Keep existing image by default
         
+        if (empty($userData['profile_image'])) {
+            $userData['profile_image'] = $defaultProfileImage;
+        }
+        
+        // Initialize profile image as current value
+        $profile_image = $userData['profile_image'];
+        
+        // Process profile image if uploaded
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['size'] > 0) {
             $target_dir = "uploads/profile_images/";
             
@@ -58,7 +67,7 @@ if (isset($_POST['update_profile'])) {
             }
             
             $file_extension = strtolower(pathinfo($_FILES["profile_image"]["name"], PATHINFO_EXTENSION));
-            $new_filename = "user_" . $user_id . "_" . time() . "." . $file_extension;
+            $new_filename = "user_pfp" . $user_id . "_" . "." . $file_extension;
             $target_file = $target_dir . $new_filename;
             
             // Check file type
@@ -164,9 +173,6 @@ if ($ticketsResult->num_rows > 0) {
         $tickets[] = $row;
     }
 }
-
-// Default profile image path
-$defaultProfileImage = "../images/default-pfp.png";
 
 // Close connection
 $conn->close();
@@ -523,11 +529,9 @@ $conn->close();
         <div class="profile-container">
             <div class="profile-sidebar">
                 <div class="profile-image-container">
-                    <?php if (!empty($userData['profile_image'])): ?>
-                        <img src="<?php echo htmlspecialchars($userData['profile_image']); ?>" alt="Profile Photo" class="profile-image">
-                    <?php else: ?>
-                        <img src="<?php echo htmlspecialchars($defaultProfileImage); ?>" alt="Default Profile Photo" class="profile-image">
-                    <?php endif; ?>
+                    <!-- Always use the user's profile image if it exists, otherwise use the default image -->
+                    <img src="<?php echo !empty($userData['profile_image']) ? htmlspecialchars($userData['profile_image']) : $defaultProfileImage; ?>" 
+                         alt="Profile Photo" class="profile-image">
                 </div>
                 <ul class="profile-nav">
                     <li><a href="#" class="active" onclick="showTab('personal-info'); return false;">Personal Information</a></li>
@@ -586,13 +590,12 @@ $conn->close();
                             <div class="form-group">
                                 <label for="profile_image">Profile Image</label>
                                 <input type="file" id="profile_image" name="profile_image" accept="image/*">
-                                <small class="form-text text-muted">Current profile image will be used if no new image is selected.</small>
+                                <small class="form-text text-muted">Upload a new image or leave blank to keep current image.</small>
+                                
                                 <div class="image-preview" id="imagePreview">
-                                    <?php if (!empty($userData['profile_image']) || !empty($defaultProfileImage)): ?>
-                                        <p>Current image:</p>
-                                        <img src="<?php echo !empty($userData['profile_image']) ? htmlspecialchars($userData['profile_image']) : htmlspecialchars($defaultProfileImage); ?>" 
-                                             alt="Current Profile" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
-                                    <?php endif; ?>
+                                    <p>Current image:</p>
+                                    <img src="<?php echo !empty($userData['profile_image']) ? htmlspecialchars($userData['profile_image']) : $defaultProfileImage; ?>" 
+                                         alt="Current Profile" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
                                 </div>
                             </div>
                             
