@@ -12,6 +12,7 @@ if (!$is_logged_in) {
 $user_id = $_SESSION['user_id'];
 $successMessage = '';
 $errorMessage = '';
+$editMode = isset($_GET['edit']) && $_GET['edit'] == 'true';
 
 // Fetch user data
 $sql = "SELECT * FROM Users WHERE user_id = ?";
@@ -91,6 +92,9 @@ if (isset($_POST['update_profile'])) {
                 $userData['phone_number'] = $phone;
                 $userData['bio'] = $bio;
                 $userData['profile_image'] = $profile_image;
+                
+                // Turn off edit mode
+                $editMode = false;
             } else {
                 $errorMessage = "Error updating profile: " . $conn->error;
             }
@@ -160,6 +164,9 @@ if ($ticketsResult->num_rows > 0) {
         $tickets[] = $row;
     }
 }
+
+// Default profile image path
+$defaultProfileImage = "../images/default-pfp.png";
 
 // Close connection
 $conn->close();
@@ -293,6 +300,9 @@ $conn->close();
         
         .profile-header {
             margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         h1 {
@@ -442,6 +452,38 @@ $conn->close();
         .ticket-status.refunded, .ticket-status.cancelled {
             color: #dc3545;
         }
+        
+        .profile-info {
+            margin-bottom: 30px;
+        }
+        
+        .profile-info-row {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .profile-info-label {
+            width: 30%;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .profile-info-value {
+            width: 70%;
+        }
+        
+        .bio-section {
+            margin-top: 20px;
+        }
+        
+        .bio-content {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 3px solid #4a6fdc;
+        }
     </style>
 </head>
 <body>
@@ -484,7 +526,7 @@ $conn->close();
                     <?php if (!empty($userData['profile_image'])): ?>
                         <img src="<?php echo htmlspecialchars($userData['profile_image']); ?>" alt="Profile Photo" class="profile-image">
                     <?php else: ?>
-                        <img src="uploads/profile_images/default.jpg" alt="Default Profile Photo" class="profile-image">
+                        <img src="<?php echo htmlspecialchars($defaultProfileImage); ?>" alt="Default Profile Photo" class="profile-image">
                     <?php endif; ?>
                 </div>
                 <ul class="profile-nav">
@@ -509,42 +551,88 @@ $conn->close();
                 
                 <div id="personal-info" class="tab-content active">
                     <div class="profile-header">
-                        <h1>Personal Information</h1>
-                        <p>Update your personal details and profile</p>
+                        <div>
+                            <h1>Personal Information</h1>
+                            <p>Your profile details</p>
+                        </div>
+                        <?php if (!$editMode): ?>
+                            <a href="?edit=true" class="btn"><i class="bi bi-pencil-square"></i> Edit Profile</a>
+                        <?php endif; ?>
                     </div>
                     
-                    <form id="profile-form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userData['name']); ?>" required>
+                    <?php if ($editMode): ?>
+                        <!-- Edit Mode - Show Form -->
+                        <form id="profile-form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($userData['name']); ?>" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userData['email']); ?>" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($userData['phone_number']); ?>">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" name="bio"><?php echo htmlspecialchars($userData['bio']); ?></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profile_image">Profile Image</label>
+                                <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                                <small class="form-text text-muted">Current profile image will be used if no new image is selected.</small>
+                                <div class="image-preview" id="imagePreview">
+                                    <?php if (!empty($userData['profile_image']) || !empty($defaultProfileImage)): ?>
+                                        <p>Current image:</p>
+                                        <img src="<?php echo !empty($userData['profile_image']) ? htmlspecialchars($userData['profile_image']) : htmlspecialchars($defaultProfileImage); ?>" 
+                                             alt="Current Profile" style="max-width: 100px; max-height: 100px; margin-top: 10px;">
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            
+                            <div class="actions">
+                                <button type="submit" name="update_profile" class="btn">Save Changes</button>
+                                <a href="profile.php" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </form>
+                    <?php else: ?>
+                        <!-- View Mode - Display Information -->
+                        <div class="profile-info">
+                            <div class="profile-info-row">
+                                <div class="profile-info-label">Full Name</div>
+                                <div class="profile-info-value"><?php echo htmlspecialchars($userData['name']); ?></div>
+                            </div>
+                            
+                            <div class="profile-info-row">
+                                <div class="profile-info-label">Email Address</div>
+                                <div class="profile-info-value"><?php echo htmlspecialchars($userData['email']); ?></div>
+                            </div>
+                            
+                            <div class="profile-info-row">
+                                <div class="profile-info-label">Phone Number</div>
+                                <div class="profile-info-value">
+                                    <?php echo !empty($userData['phone_number']) ? htmlspecialchars($userData['phone_number']) : '<em>Not provided</em>'; ?>
+                                </div>
+                            </div>
+                            
+                            <div class="bio-section">
+                                <h3>About Me</h3>
+                                <div class="bio-content">
+                                    <?php if (!empty($userData['bio'])): ?>
+                                        <?php echo nl2br(htmlspecialchars($userData['bio'])); ?>
+                                    <?php else: ?>
+                                        <em>No bio information provided.</em>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($userData['email']); ?>" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($userData['phone_number']); ?>">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="bio">Bio</label>
-                            <textarea id="bio" name="bio"><?php echo htmlspecialchars($userData['bio']); ?></textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="profile_image">Profile Image</label>
-                            <input type="file" id="profile_image" name="profile_image" accept="image/*">
-                            <div class="image-preview" id="imagePreview"></div>
-                        </div>
-                        
-                        <div class="actions">
-                            <button type="submit" name="update_profile" class="btn">Save Changes</button>
-                            <button type="reset" class="btn btn-secondary">Cancel</button>
-                        </div>
-                    </form>
+                    <?php endif; ?>
                 </div>
                 
                 <div id="password" class="tab-content">
@@ -658,14 +746,17 @@ $conn->close();
         }
         
         // Handle image preview
-        document.getElementById('profile_image').addEventListener('change', function(e) {
+        document.getElementById('profile_image')?.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
                     const preview = document.getElementById('imagePreview');
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" style="max-width: 200px; max-height: 200px; margin-top: 10px;">`;
+                    preview.innerHTML = `
+                        <p>New image preview:</p>
+                        <img src="${e.target.result}" alt="Profile Preview" style="max-width: 200px; max-height: 200px; margin-top: 10px;">
+                    `;
                 }
                 
                 reader.readAsDataURL(file);
