@@ -42,35 +42,12 @@ $result = $conn->query($sql);
     <div class="container position-relative z-2">
       <h1 class="display-5 fw-bold fade-in">Bringing People Together, One Event at a Time!</h1>
       <p class="lead fw-semibold mt-3 fade-in delay-1">Discover, organize, and attend unforgettable events that connect communities and inspire moments.</p>
-      <a href="#" class="btn btn-danger btn-lg mt-4 px-5 py-2 fade-in delay-2">Join Now!</a>
+      <a href="Webpages/register.php" class="btn btn-danger btn-lg mt-4 px-5 py-2 fade-in delay-2">Join Now!</a>
     </div>
   </section>
 </div>
 
-<!-- Search Bar -->
-<section class="bg-dark text-white py-4">
-  <div class="container">
-    <form class="row g-3 justify-content-center align-items-center">
-      <div class="col-md-3">
-        <label for="searchEvent" class="form-label">Search Event</label>
-        <input type="text" class="form-control" id="searchEvent" placeholder="Concert">
-      </div>
-      <div class="col-md-3">
-        <label for="place" class="form-label">Place</label>
-        <input type="text" class="form-control" id="place" placeholder="Mumbai">
-      </div>
-      <div class="col-md-3">
-        <label for="time" class="form-label">Time</label>
-        <select class="form-select" id="time">
-          <option selected>Any date</option>
-          <option value="1">Today</option>
-          <option value="2">This Week</option>
-          <option value="3">This Month</option>
-        </select>
-      </div>
-    </form>
-  </div>
-</section>
+
 
 <div class="container mt-4">
     <div class="d-flex align-items-center justify-content-between py-5">
@@ -132,27 +109,31 @@ $result = $conn->query($sql);
                 // Generate event card
                 echo '
                 <div class="col">
-                    <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
-                        <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
-                            <title>' . htmlspecialchars($row["title"]) . '</title>
-                            <rect width="100%" height="100%" fill="#55595c"></rect>
-                            <text x="50%" y="50%" fill="#eceeef" dy=".3em">' . htmlspecialchars($row["title"]) . '</text>
-                        </svg>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
-                                    <b class="bi bi-info-circle fs-5 date">' . $month . '</b>
-                                    <span class="fs-1 fw-bold">' . $day . '</span>
-                                </div>
-                                <div class="col-10">
-                                    <p><b>' . htmlspecialchars($row["title"]) . '</b></p>
-                                    <p class="card-text">
-                                        ' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="col">
+    <a href="Webpages/event_page.php?id=' . $row["event_id"] . '" class="event-link">
+        <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
+            <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
+                <title>' . htmlspecialchars($row["title"]) . '</title>
+                <rect width="100%" height="100%" fill="#55595c"></rect>
+                <text x="50%" y="50%" fill="#eceeef" dy=".3em">' . htmlspecialchars($row["title"]) . '</text>
+            </svg>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
+                        <b class="bi bi-info-circle fs-5 date">' . $month . '</b>
+                        <span class="fs-1 fw-bold">' . $day . '</span>
                     </div>
+                    <div class="col-10">
+                        <p><b>' . htmlspecialchars($row["title"]) . '</b></p>
+                        <p class="card-text">
+                            ' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
                 </div>';
             }
         } else {
@@ -168,6 +149,36 @@ $result = $conn->query($sql);
 
 <!-- Create Event Section -->
 <style>
+    .album {
+    margin-bottom: 50px;
+    background-color: #f8f9fa;
+    padding-bottom: 30px;
+}
+
+.event-promo-section {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 40px 20px;
+    margin: 0 auto 40px auto;
+    max-width: 95%;
+}
+
+.container-divider {
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #5e2ced, transparent);
+    margin: 0 auto 60px auto;
+}
+    .event-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+.event-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
         .feature-icon {
             background-color: #0d6efd;
             color: white;
@@ -214,7 +225,7 @@ $result = $conn->query($sql);
             <h2 class="fw-bold mb-4">Have an event in mind?</h2>
             
             <p class="lead section-description">
-                Share your event with our community. Whether it's a conference, workshop, or social gathering, 
+                Share your event with our community. Whether it's a Music, Sports, or Workshop, 
                 Eventify makes it easy to create and promote your events.
             </p>
             
@@ -262,7 +273,12 @@ $result = $conn->query($sql);
             </div>
         </div>
     </section>
-
+    <footer style="background-color: #5e2ced; color: white; padding: 30px; margin-top: 60px; text-align: center;">
+  <h3 style="margin-bottom: 10px;">Contact Us</h3>
+  <p>Email: support@eventify.com</p>
+  <p>Phone: +91-98765-43210</p>
+  <p>Address: Ghatkopar, Mumbai, India</p>
+</footer>
 <?php $conn->close(); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
