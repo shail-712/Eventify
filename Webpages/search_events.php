@@ -1,4 +1,6 @@
+
 <?php
+// search_events.php
 include '../config/database.php';
 session_start();
 // Query to fetch events with category and organizer information

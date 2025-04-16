@@ -1,3 +1,16 @@
+<?php
+// Include database connection
+include 'config/database.php';
+
+// Query to fetch the 3 most recent events
+$sql = "SELECT e.*, c.category_name 
+        FROM Events e
+        LEFT JOIN EventCategories c ON e.category_id = c.category_id
+        ORDER BY e.start_time ASC
+        LIMIT 3";
+$result = $conn->query($sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +20,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+<body>
 <!-- Hero Section -->
 <div class="hero-wrapper">
   <!-- Header -->
@@ -73,8 +87,8 @@
                 <option value="3">Wednesday</option>
                 <option value="4">Thursday</option>
                 <option value="5">Friday</option>
-                <option value="5">Saturday</option>
-                <option value="5">Sunday</option>
+                <option value="6">Saturday</option>
+                <option value="0">Sunday</option>
             </select>
 
             <!-- Event Type Dropdown -->
@@ -88,9 +102,17 @@
             <!-- Category Dropdown -->
             <select class="form-select filter-dropdown px-5 select options" aria-label="Category">
                 <option disabled selected>Category</option>
-                <option value="1">Business</option>
-                <option value="2">Technology</option>
-                <option value="3">Education</option>
+                <?php
+                // Fetch categories for the dropdown
+                $cat_sql = "SELECT * FROM EventCategories ORDER BY category_name";
+                $cat_result = $conn->query($cat_sql);
+                
+                if ($cat_result && $cat_result->num_rows > 0) {
+                    while($cat_row = $cat_result->fetch_assoc()) {
+                        echo '<option value="' . $cat_row["category_id"] . '">' . $cat_row["category_name"] . '</option>';
+                    }
+                }
+                ?>
             </select>
         </div>
     </div>
@@ -99,37 +121,53 @@
 <div class="album py-5 bg-body-tertiary">
     <div class="container">
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-        <div class="col">
-            <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
-                <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-                    <title>Placeholder</title>
-                    <rect width="100%" height="100%" fill="#55595c"></rect>
-                    <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
-                </svg>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Column 1 (2/12) -->
-                        <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
-                            <b class="bi bi-info-circle fs-5 date">FEB</b>
-                            <span class="fs-1 fw-bold">20</span> <!-- Date below month -->
-                        </div>
-            
-                        <!-- Column 2 (10/12) -->
-                        <div class="col-10">
-                            <p><b>Title</b></p>
-                            <p class="card-text">
-                                This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-                            </p>
+        <?php
+        if ($result && $result->num_rows > 0) {
+            // Output data of each row
+            while($row = $result->fetch_assoc()) {
+                // Format the date
+                $event_date = new DateTime($row["start_time"]);
+                $month = $event_date->format('M');
+                $day = $event_date->format('d');
+                
+                // Generate event card
+                echo '
+                <div class="col">
+                    <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
+                        <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
+                            <title>' . htmlspecialchars($row["title"]) . '</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            <text x="50%" y="50%" fill="#eceeef" dy=".3em">' . htmlspecialchars($row["title"]) . '</text>
+                        </svg>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
+                                    <b class="bi bi-info-circle fs-5 date">' . $month . '</b>
+                                    <span class="fs-1 fw-bold">' . $day . '</span>
+                                </div>
+                                <div class="col-10">
+                                    <p><b>' . htmlspecialchars($row["title"]) . '</b></p>
+                                    <p class="card-text">
+                                        ' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Repeat for other cards -->
-        <!-- For brevity, I've removed the duplicated card elements, but you should keep them in your actual code -->
+                </div>';
+            }
+        } else {
+            echo "<p class='text-center w-100'>No events found</p>";
+        }
+        ?>
       </div>
       <div class="d-flex justify-content-center py-5">
           <a href="Webpages/search_events.php"><button type="button" class="btn btn-outline-primary btn-lg px-4">View More</button></a>
       </div>  
     </div>
 </div>
+
+<?php $conn->close(); ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
