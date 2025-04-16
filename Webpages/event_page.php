@@ -255,6 +255,190 @@ function formatReviewDate($date) {
         .rating-input:checked ~ .rating-label {
             color: #ffcc00;
         }
+
+        .event-hero {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 60px 0;
+    min-height: 300px;
+    }
+
+    .event-hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Darkened overlay */
+        z-index: 1;
+    }
+
+    .event-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .event-gallery-container {
+        margin-bottom: 30px;
+    }
+
+    .main-image-container {
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    #current-gallery-image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .image-caption {
+        margin-top: 8px;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .gallery-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute;
+        bottom: 50%;
+        transform: translateY(50%);
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .gallery-nav-btn {
+        background-color: rgba(255, 255, 255, 0.7);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .gallery-nav-btn:hover {
+        background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    #image-counter {
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+    /* Main layout for the event page */
+.event-content-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+/* Left side gallery */
+.event-gallery-container {
+    flex: 1;
+    min-width: 0; /* Prevents overflow */
+    max-width: 65%;
+}
+
+/* Right side sidebar */
+.event-sidebar {
+    flex: 0 0 30%;
+    min-width: 300px;
+}
+
+/* Gallery styling */
+.main-image-container {
+    position: relative;
+    width: 100%;
+}
+
+#current-gallery-image {
+    width: 100%;
+    max-height: 450px; /* Restrict image height */
+    object-fit: contain; /* Keep aspect ratio, fit inside container */
+    border-radius: 8px;
+    background-color: #f8f8f8; /* Light background for transparent images */
+}
+
+.image-caption {
+    margin-top: 8px;
+    font-style: italic;
+    color: #666;
+}
+
+.gallery-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 50%;
+    transform: translateY(50%);
+    width: 100%;
+    padding: 0 10px;
+}
+
+.gallery-nav-btn {
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 5;
+    color: white; /* White arrow color for better contrast */
+}
+
+.gallery-nav-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Even darker on hover */
+}
+.event-details-container {
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the container */
+    padding: 20px;
+}
+
+#image-counter {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-content-layout {
+        flex-direction: column;
+    }
+    
+    .event-gallery-container {
+        max-width: 100%;
+    }
+    
+    .event-sidebar {
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -291,27 +475,138 @@ function formatReviewDate($date) {
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section text-center">
+    <section class="hero-section text-center event-hero" style="background-image: url('../images/uploads/events/<?php echo $event['banner_image']; ?>');">
         <div class="container">
-            <span class="category-badge"><?php echo htmlspecialchars($event['category_name']); ?></span>
-            <h1 class="display-4 fw-bold"><?php echo htmlspecialchars($event['title']); ?></h1>
-            <p class="lead">Organized by <?php echo htmlspecialchars($event['organizer_name']); ?></p>
-            <?php if ($review_count > 0): ?>
-            <div class="d-flex justify-content-center align-items-center">
-                <div class="text-warning me-2">
-                    <?php echo displayStarRating($average_rating); ?>
+            <div class="event-hero-content">
+                <span class="category-badge"><?php echo htmlspecialchars($event['category_name']); ?></span>
+                <h1 class="display-4 fw-bold"><?php echo htmlspecialchars($event['title']); ?></h1>
+                <p class="lead">Organized by <?php echo htmlspecialchars($event['organizer_name']); ?></p>
+                <?php if ($review_count > 0): ?>
+                <div class="d-flex justify-content-center align-items-center">
+                    <div class="text-warning me-2">
+                        <?php echo displayStarRating($average_rating); ?>
+                    </div>
+                    <span class="text-white"><?php echo $average_rating; ?> (<?php echo $review_count; ?> reviews)</span>
                 </div>
-                <span class="text-white"><?php echo $average_rating; ?> (<?php echo $review_count; ?> reviews)</span>
+                <?php endif; ?>
             </div>
-            <?php endif; ?>
         </div>
     </section>
 
     <!-- Main Content -->
     <div class="container py-5">
+    <div class="event-content-layout">
+        <div class="event-gallery-container">
+        <div class="event-gallery">
+            <?php
+            // Get the main event image
+            $mainImagePath = "../images/uploads/events/" . $event['event_image'];
+        
+            // Get all additional event images
+            $imagesSql = "SELECT * FROM EventImages WHERE event_id = ?";
+            $imagesStmt = $conn->prepare($imagesSql);
+            $imagesStmt->bind_param("i", $event_id);
+            $imagesStmt->execute();
+            $imagesResult = $imagesStmt->get_result();
+        
+            $allImages = [];
+            $allImages[] = [
+                'path' => $mainImagePath,
+                'caption' => $event['title'],
+                'is_main' => true
+            ];
+        
+            while ($image = $imagesResult->fetch_assoc()) {
+                $allImages[] = [
+                    'path' => "../images/uploads/events/" . $image['image_path'],
+                    'caption' => $image['caption'] ?? '',
+                    'is_main' => false
+                ];
+            }
+        
+            $totalImages = count($allImages);
+            ?>
+        
+            <div class="main-image-container">
+                <img id="current-gallery-image" src="<?php echo htmlspecialchars($allImages[0]['path']); ?>" alt="<?php echo htmlspecialchars($allImages[0]['caption']); ?>">
+                <p id="image-caption" class="image-caption"><?php echo htmlspecialchars($allImages[0]['caption']); ?></p>
+        
+                <?php if ($totalImages > 1): ?>
+                <div class="gallery-navigation">
+                    <button id="prev-image" class="gallery-nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <span id="image-counter">1 / <?php echo $totalImages; ?></span>
+                    <button id="next-image" class="gallery-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        </div>
+                <!-- Registration Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row g-3 mb-4">
+                                <div class="col-6">
+                                    <div class="event-meta-item p-3 text-center">
+                                        <h5 class="fw-bold text-primary mb-2">Starts</h5>
+                                        <p class="mb-0"><?php echo formatDate($event['start_time']); ?></p>
+                                        <small class="text-muted"><?php echo formatTime($event['start_time']); ?></small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="event-meta-item p-3 text-center">
+                                        <h5 class="fw-bold text-primary mb-2">Ends</h5>
+                                        <p class="mb-0"><?php echo formatDate($event['end_time']); ?></p>
+                                        <small class="text-muted"><?php echo formatTime($event['end_time']); ?></small>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <div class="text-center mb-4">
+                                <h3 class="display-6 fw-bold text-primary"><?php echo formatPrice($event['ticket_price']); ?></h3>
+                            </div>
+        
+                            <div class="d-grid mb-3">
+                                <?php if ($is_logged_in): ?>
+                                    <form action="process_registration.php" method="post">
+                                        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
+                                <?php endif; ?>
+                            </div>
+        
+                            <div class="text-center">
+                                <p class="text-muted small mb-0"><?php echo $registration_count; ?> people already registered</p>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Organizer Info -->
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title h5 mb-3">Organizer</h4>
+                            <div class="d-flex align-items-center">
+                                <img src="../images/uploads/profile_images/user_<?php echo $event['organizer_id']; ?>.jpg" onerror="this.src='../images/default-pfp.png'" alt="<?php echo htmlspecialchars($event['organizer_name']); ?>" class="rounded-circle me-3" style="width: 60px; height: 60px;">
+                                <div>
+                                    <h5 class="mb-1"><?php echo htmlspecialchars($event['organizer_name']); ?></h5>
+                                    <p class="text-muted mb-0 small">Event Organizer</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactOrganizerModal">Contact Organizer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
         <!-- Event Details -->
         <div class="row mb-5">
-            <div class="col-lg-8">
+            <div class="col-lg-8 event-details-container">
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <div class="event-location">
@@ -332,8 +627,8 @@ function formatReviewDate($date) {
                             <div class="card review-card mb-3">
                                 <div class="card-body">
                                     <div class="d-flex mb-3">
-                                        <img src="images/users/<?php echo $review['user_id']; ?>.jpg" 
-                                             onerror="this.src='images/placeholder_user.jpg'" 
+                                        <img src="..images/uploads/profile_images/user_<?php echo $review['user_id']; ?>.jpg" 
+                                             onerror="this.src='../images/default-pfp.png'" 
                                              alt="<?php echo htmlspecialchars($review['reviewer_name']); ?>" 
                                              class="review-avatar me-3">
                                         <div>
@@ -413,67 +708,7 @@ function formatReviewDate($date) {
                 </div>
             </div>
             
-            <!-- Registration Sidebar -->
-            <div class="col-lg-4">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row g-3 mb-4">
-                            <div class="col-6">
-                                <div class="event-meta-item p-3 text-center">
-                                    <h5 class="fw-bold text-primary mb-2">Starts</h5>
-                                    <p class="mb-0"><?php echo formatDate($event['start_time']); ?></p>
-                                    <small class="text-muted"><?php echo formatTime($event['start_time']); ?></small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="event-meta-item p-3 text-center">
-                                    <h5 class="fw-bold text-primary mb-2">Ends</h5>
-                                    <p class="mb-0"><?php echo formatDate($event['end_time']); ?></p>
-                                    <small class="text-muted"><?php echo formatTime($event['end_time']); ?></small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center mb-4">
-                            <h3 class="display-6 fw-bold text-primary"><?php echo formatPrice($event['ticket_price']); ?></h3>
-                        </div>
-                        
-                        <div class="d-grid mb-3">
-                            <?php if ($is_logged_in): ?>
-                                <form action="process_registration.php" method="post">
-                                    <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-                                    <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
-                                </form>
-                            <?php else: ?>
-                                <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
-                            <?php endif; ?>
-                        </div>
-                        
-                        <div class="text-center">
-                            <p class="text-muted small mb-0"><?php echo $registration_count; ?> people already registered</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Organizer Info -->
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="card-title h5 mb-3">Organizer</h4>
-                        <div class="d-flex align-items-center">
-                            <img src="images/organizers/<?php echo $event['organizer_id']; ?>.jpg" onerror="this.src='images/placeholder_user.jpg'" alt="<?php echo htmlspecialchars($event['organizer_name']); ?>" class="rounded-circle me-3" style="width: 60px; height: 60px;">
-                            <div>
-                                <h5 class="mb-1"><?php echo htmlspecialchars($event['organizer_name']); ?></h5>
-                                <p class="text-muted mb-0 small">Event Organizer</p>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="d-grid">
-                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactOrganizerModal">Contact Organizer</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         
         <!-- FAQ Section -->
         <section id="faq" class="mb-5">
@@ -550,7 +785,12 @@ function formatReviewDate($date) {
                 <?php foreach ($related_events as $rel_event): ?>
                 <div class="col">
                     <div class="card h-100 shadow-sm">
-                        <img src="images/events/<?php echo $rel_event['event_id']; ?>.jpg" onerror="this.src='images/placeholder_event.jpg'" class="card-img-top" alt="Event image">
+                    <img src="../images/uploads/events/<?php echo htmlspecialchars($rel_event['event_image'] ?? ''); ?>" 
+                        onerror="this.src='../images/placeholder_event.jpg'" 
+                        class="card-img-top" 
+                        alt="Event image">
+
+
                         <div class="card-body">
                             <span class="category-badge"><?php echo htmlspecialchars($rel_event['category_name']); ?></span>
                             <h5 class="card-title"><?php echo htmlspecialchars($rel_event['title']); ?></h5>
@@ -668,6 +908,36 @@ function formatReviewDate($date) {
                     ratingContainer.appendChild(star.previousElementSibling); // Add input
                     ratingContainer.appendChild(star); // Add label
                 });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const allImages = <?php echo json_encode($allImages); ?>;
+            let currentImageIndex = 0;
+            const totalImages = allImages.length;
+            
+            const currentGalleryImage = document.getElementById('current-gallery-image');
+            const imageCaption = document.getElementById('image-caption');
+            const imageCounter = document.getElementById('image-counter');
+            const prevButton = document.getElementById('prev-image');
+            const nextButton = document.getElementById('next-image');
+            
+            if(totalImages > 1) {
+                prevButton.addEventListener('click', function() {
+                    currentImageIndex = (currentImageIndex - 1 + totalImages) % totalImages;
+                    updateImage();
+                });
+                
+                nextButton.addEventListener('click', function() {
+                    currentImageIndex = (currentImageIndex + 1) % totalImages;
+                    updateImage();
+                });
+            }
+            
+            function updateImage() {
+                currentGalleryImage.src = allImages[currentImageIndex].path;
+                imageCaption.textContent = allImages[currentImageIndex].caption;
+                imageCounter.textContent = `${currentImageIndex + 1} / ${totalImages}`;
             }
         });
     </script>
