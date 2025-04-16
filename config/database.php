@@ -111,6 +111,8 @@ $tables = [
         FOREIGN KEY (event_id) REFERENCES Events(event_id),
         FOREIGN KEY (user_id) REFERENCES Users(user_id)
     )"
+
+    
 ];
 
 // Execute each table creation query
