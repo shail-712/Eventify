@@ -161,91 +161,92 @@ $all_events_result = $conn->query($all_events_query);
         <?php endif; ?>
     </ul>
 </div>
-  <div class="container mt-4">
-    <div class="welcome-banner">
-      <h2>Welcome, <?php echo htmlspecialchars($user['name']); ?>!</h2>
-      <p>
-        <?php 
-        $hour = date('H');
-        if ($hour < 12) {
-          echo "Good morning! ";
-        } elseif ($hour < 18) {
-          echo "Good afternoon! ";
-        } else {
-          echo "Good evening! ";
-        }
-        ?>
-        You have <?php echo $events_count; ?> upcoming event<?php echo $events_count != 1 ? 's' : ''; ?>.
-      </p>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <h3>My Upcoming Events</h3>
-        <?php if ($joined_events_result->num_rows > 0): ?>
-          <?php while($event = $joined_events_result->fetch_assoc()): ?>
-            <div class="card event-card">
-              <div class="card-body">
-                <h5 class="card-title">
-                  <?php echo htmlspecialchars($event['title']); ?>
-                  <span class="badge bg-primary category-badge">
-                    <?php echo htmlspecialchars($event['category'] ?? 'Uncategorized'); ?>
-                  </span>
-                </h5>
-                <p class="card-text">
-                  <strong>Date:</strong> <?php echo date('F d, Y H:i', strtotime($event['start_time'])); ?><br>
-                  <strong>Location:</strong> <?php echo htmlspecialchars($event['location']); ?><br>
-                  <strong>Ticket Price:</strong> $<?php echo number_format($event['ticket_price'], 2); ?><br>
-                  <strong>Ticket Type:</strong> <?php echo htmlspecialchars($event['ticket_type'] ?? 'General'); ?><br>
-                  <strong>Tickets Purchased:</strong> <?php echo intval($event['ticket_count']); ?>
-                </p>
-              </div>
+<div class="container mt-4">
+  <div class="welcome-banner">
+    <h2>Welcome, <?php echo htmlspecialchars($user['name']); ?>!</h2>
+    <p>
+      <?php 
+      $hour = date('H');
+      if ($hour < 12) {
+        echo "Good morning! ";
+      } elseif ($hour < 18) {
+        echo "Good afternoon! ";
+      } else {
+        echo "Good evening! ";
+      }
+      ?>
+      You have <?php echo $events_count; ?> upcoming event<?php echo $events_count != 1 ? 's' : ''; ?>.
+    </p>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h3>My Upcoming Events</h3>
+      <?php if ($joined_events_result->num_rows > 0): ?>
+        <?php while($event = $joined_events_result->fetch_assoc()): ?>
+          <div class="card event-card">
+            <div class="card-body">
+              <h5 class="card-title">
+                <?php echo htmlspecialchars($event['title']); ?>
+                <span class="badge bg-primary category-badge">
+                  <?php echo htmlspecialchars($event['category'] ?? 'Uncategorized'); ?>
+                </span>
+              </h5>
+              <p class="card-text">
+                <strong>Date:</strong> <?php echo date('F d, Y H:i', strtotime($event['start_time'])); ?><br>
+                <strong>Location:</strong> <?php echo htmlspecialchars($event['location']); ?><br>
+                <strong>Ticket Price:</strong> $<?php echo number_format($event['ticket_price'], 2); ?><br>
+                <strong>Ticket Type:</strong> <?php echo htmlspecialchars($event['ticket_type'] ?? 'General'); ?><br>
+                <strong>Tickets Purchased:</strong> <?php echo intval($event['ticket_count']); ?><br>
+                <a href="attendance.php?event_id=<?php echo $event['event_id']; ?>" class="btn btn-outline-primary mt-2 btn-sm">Manage Attendance</a>
+              </p>
             </div>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <p>You haven't joined any upcoming events.</p>
-        <?php endif; ?>
-      </div>
-      <div class="col-md-8">
-        <div id="calendar"></div>
-      </div>
+          </div>
+        <?php endwhile; ?>
+      <?php else: ?>
+        <p>You haven't joined any upcoming events.</p>
+      <?php endif; ?>
+    </div>
+    <div class="col-md-8">
+      <div id="calendar"></div>
     </div>
   </div>
-  <button class="scroll-top" id="scrollTopBtn">&#8679;</button>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
-  <script>
-    const scrollBtn = document.getElementById("scrollTopBtn");
-    window.onscroll = () => scrollBtn.classList.toggle("show", window.scrollY > 200);
-    scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+</div>
+<button class="scroll-top" id="scrollTopBtn">&#8679;</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
+<script>
+  const scrollBtn = document.getElementById("scrollTopBtn");
+  window.onscroll = () => scrollBtn.classList.toggle("show", window.scrollY > 200);
+  scrollBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: [
-          <?php 
-          $events = [];
-          if ($all_events_result->num_rows > 0) {
-            while($event = $all_events_result->fetch_assoc()) {
-              $events[] = "{
-                title: '".htmlspecialchars($event['title'])."',
-                start: '".date('Y-m-d H:i:s', strtotime($event['start_time']))."',
-                end: '".date('Y-m-d H:i:s', strtotime($event['end_time']))."',
-                extendedProps: {
-                  category: '".htmlspecialchars($event['category'] ?? 'Uncategorized')."',
-                  registeredCount: '".intval($event['registered_count'])."',
-                  ticketPrice: '".number_format($event['ticket_price'], 2)."'
-                }
-              }";
-            }
-            echo implode(',', $events);
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: [
+        <?php 
+        $events = [];
+        if ($all_events_result->num_rows > 0) {
+          while($event = $all_events_result->fetch_assoc()) {
+            $events[] = "{
+              title: '".htmlspecialchars($event['title'])."',
+              start: '".date('Y-m-d H:i:s', strtotime($event['start_time']))."',
+              end: '".date('Y-m-d H:i:s', strtotime($event['end_time']))."',
+              extendedProps: {
+                category: '".htmlspecialchars($event['category'] ?? 'Uncategorized')."',
+                registeredCount: '".intval($event['registered_count'])."',
+                ticketPrice: '".number_format($event['ticket_price'], 2)."'
+              }
+            }";
           }
-          ?>
-        ]
-      });
-      calendar.render();
+          echo implode(',', $events);
+        }
+        ?>
+      ]
     });
-  </script>
+    calendar.render();
+  });
+</script>
 </body>
 </html>
 <?php
