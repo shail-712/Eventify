@@ -32,10 +32,29 @@ $result = $conn->query($sql);
     <ul class="nav nav-pills">
     <li class="nav-item header-buttons me-3"><a href="index.php" class="nav-link">Home</a></li>
       <li class="nav-item header-buttons me-3"><a href="Webpages/event_page.php" class="nav-link">Events</a></li>
+      <li class="nav-item header-buttons me-3"><a href="Webpages/event-dashboard.php" class="nav-link">Dashboard</a></li>
       <li class="nav-item header-buttons me-3"><a href="Webpages/about.php" class="nav-link">About</a></li>
-      <li class="nav-item header-buttons login me-3"><a href="Webpages/login.php" class="nav-link">Login</a></li>
+      <?php if (isset($_SESSION['user_id'])): ?>
+    <li class="nav-item header-buttons login me-3">
+        <a href="Webpages/profile.php" class="nav-link">My Profile</a>
+    </li>
+    <li class="nav-item header-buttons login me-3">
+        <a href="logout.php" class="nav-link">Logout</a>
+    </li>
+<?php else: ?>
+    <li class="nav-item header-buttons login me-3">
+        <a href="Webpages/login.php" class="nav-link">Login</a>
+    </li>
+<?php endif; ?>
+      
+
     </ul>
   </header>
+
+ 
+   
+  
+
 
   <!-- Hero Section (inside the hero-wrapper) -->
   <section class="hero-section text-white text-center d-flex align-items-center justify-content-center">
