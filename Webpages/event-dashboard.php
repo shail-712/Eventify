@@ -146,16 +146,21 @@ $all_events_result = $conn->query($all_events_query);
   </style>
 </head>
 <body>
-  <div class="top-header">
-    <a href="../index.php" class="logo">Eventify</a>
+<div class="top-header">
+    <a href="/" class="logo">Eventify</a>
     <ul class="nav">
-      <li><a href="../index.php">Home</a></li>
-      <li><a href="search_events.php">Events</a></li>
-      <li><a href="about.php">About</a></li>
-      <li><a href="profile.php">My Profile</a></li>
-      <li><a href="logout.php">Logout</a></li>
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
     </ul>
-  </div>
+</div>
   <div class="container mt-4">
     <div class="welcome-banner">
       <h2>Welcome, <?php echo htmlspecialchars($user['name']); ?>!</h2>

@@ -7,6 +7,22 @@ session_start();
 // Database connection
 include '../config/database.php';
 
+// TEMPORARY: Create Attendance table if it doesn't exist
+$conn->query("
+    CREATE TABLE IF NOT EXISTS Attendance (
+        attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+        ticket_id INT NOT NULL,
+        check_in_by INT NOT NULL,
+        check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        notes TEXT,
+        CONSTRAINT fk_ticket FOREIGN KEY (ticket_id) REFERENCES Tickets(ticket_id) ON DELETE CASCADE,
+        CONSTRAINT fk_checker FOREIGN KEY (check_in_by) REFERENCES Users(user_id) ON DELETE SET NULL
+    )
+");
+
+
+
+
 // Check if user is logged in and has appropriate permissions
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] != 'organizer' && $_SESSION['role'] != 'admin')) {
     header("Location: login.php");
