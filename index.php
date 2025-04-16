@@ -30,8 +30,8 @@ $result = $conn->query($sql);
       <span class="fs-1 logo">Eventify</span>
     </a>
     <ul class="nav nav-pills">
-      <li class="nav-item header-buttons me-3"><a href="#" class="nav-link">Events</a></li>
-      <li class="nav-item header-buttons me-3"><a href="#" class="nav-link">Blog</a></li>
+      <li class="nav-item header-buttons me-3"><a href="Webpages/event_page.php" class="nav-link">Events</a></li>
+      <li class="nav-item header-buttons me-3"><a href="Webpages/blog.php" class="nav-link">Blog</a></li>
       <li class="nav-item header-buttons me-3"><a href="#" class="nav-link">About</a></li>
       <li class="nav-item header-buttons me-3"><a href="#" class="nav-link">Contact</a></li>
       <li class="nav-item header-buttons login me-3"><a href="Webpages/login.php" class="nav-link">Login</a></li>
