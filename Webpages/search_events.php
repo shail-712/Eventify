@@ -22,7 +22,53 @@ $is_logged_in = isset($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
     <style>
-        
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+        body {
+            background-color: #f8f5ff;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .top-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, #4e1c89, #5e2ced);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .top-header .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .top-header .nav {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .top-header .nav a {
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 15px;
+            color: #ffffff;
+            padding: 8px 18px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .top-header .nav a:hover {
+            background-color: #ffffff;
+            color: #5e2ced;
+        }
+
         .event-link {
             text-decoration: none;
             color: inherit;
@@ -41,79 +87,22 @@ $is_logged_in = isset($_SESSION['user_id']);
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php">Eventify</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="search_events.php">Events</a>
-                    </li>
-                    <?php if ($is_logged_in): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="profile.php">My Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container mt-4">
-    <div class="d-flex align-items-center justify-content-between py-5">
-        <h2 class="fw-bold text-dark">Upcoming Events</h2>
-
-        <div class="d-flex gap-3 align-items-center">
-            <!-- Search Bar - Made Capsule Shaped -->
-            <div class="input-group" style="width: 400px;">
-                <input type="text" class="form-control rounded-pill rounded-end" id="event-search" placeholder="Search events..." style="border-right: none; z-index: 1;">
-                <button class="btn btn-primary rounded-pill rounded-start" type="button" id="search-button" style="margin-left: 5px; z-index: 0;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Time Dropdown - Added Box Shadow -->
-            <select class="form-select filter-dropdown rounded-pill" aria-label="Time Period" id="time-filter" style="width: 140px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                <option selected value="all">All Time</option>
-                <option value="today">Today</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-            </select>
-
-            <!-- Category Dropdown - Added Box Shadow -->
-            <select class="form-select filter-dropdown rounded-pill" aria-label="Category" id="category-filter" style="width: 160px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                <option selected value="all">All Categories</option>
-                <?php
-                // Fetch categories for the dropdown
-                $cat_sql = "SELECT * FROM EventCategories ORDER BY category_name";
-                $cat_result = $conn->query($cat_sql);
-                
-                if ($cat_result->num_rows > 0) {
-                    while($cat_row = $cat_result->fetch_assoc()) {
-                        echo '<option value="' . $cat_row["category_id"] . '">' . $cat_row["category_name"] . '</option>';
-                    }
-                }
-                ?>
-            </select>
-        </div>
-    </div>
+<div class="top-header">
+    <a href="/" class="logo">Eventify</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
 </div>
+
+
 
     <div class="album py-5 bg-body-tertiary">
         <div class="container">
