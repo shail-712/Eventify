@@ -33,7 +33,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
             $delete_tickets->close();
             
             // Delete related registrations
-            $delete_registrations = $conn->prepare("DELETE FROM event_registrations WHERE event_id = ?");
+            $delete_registrations = $conn->prepare("DELETE FROM eventregistrations WHERE event_id = ?");
             $delete_registrations->bind_param("i", $event_id);
             $delete_registrations->execute();
             $delete_registrations->close();
@@ -58,7 +58,7 @@ $role = $_SESSION['role'];
 if ($role == 'admin') {
     // Admins see all events
     $query = "SELECT e.*, u.name as organizer_name, c.category_name, 
-              (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.event_id) as registration_count
+              (SELECT COUNT(*) FROM eventregistrations WHERE event_id = e.event_id) as registration_count
               FROM Events e
               JOIN Users u ON e.organizer_id = u.user_id
               JOIN EventCategories c ON e.category_id = c.category_id
@@ -67,7 +67,7 @@ if ($role == 'admin') {
 } else {
     // Organizers see only their events
     $query = "SELECT e.*, u.name as organizer_name, c.category_name, 
-              (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.event_id) as registration_count
+              (SELECT COUNT(*) FROM eventregistrations WHERE event_id = e.event_id) as registration_count
               FROM Events e
               JOIN Users u ON e.organizer_id = u.user_id
               JOIN EventCategories c ON e.category_id = c.category_id
