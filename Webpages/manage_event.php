@@ -95,6 +95,58 @@ $stmt->close();
     <title>Manage Events</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <div class="top-header">
+    <a href="/" class="logo">Eventify</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
+</div>
+<style>
+    .top-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, #4e1c89, #5e2ced);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .top-header .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .top-header .nav {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .top-header .nav a {
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 15px;
+            color: #ffffff;
+            padding: 8px 18px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .top-header .nav a:hover {
+            background-color: #ffffff;
+            color: #5e2ced;
+        }
+        </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -119,12 +171,7 @@ $stmt->close();
             </div>
         <?php endif; ?>
         
-        <?php if (isset($_GET['updated'])): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                Event updated successfully!
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
+      
         
         <?php if (empty($events)): ?>
             <div class="alert alert-info">
@@ -168,23 +215,26 @@ $stmt->close();
                                     <span class="badge bg-info"><?php echo $event['registration_count']; ?></span>
                                 </td>
                                 <td>
-                                    <div class="btn-group">
-                                        <a href="view_event.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-primary">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="edit_event.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-warning">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="manage_event.php?delete=<?php echo $event['event_id']; ?>" 
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Are you sure you want to delete this event? This will also remove all registrations and tickets.')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                        <a href="event_attendees.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-info">
-                                            <i class="fas fa-users"></i>
-                                        </a>
-                                    </div>
-                                </td>
+                        <div class="btn-group">
+                            <!-- View Event -->
+                            <a href="search_events.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-primary" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            <!-- Delete Event -->
+                            <a href="manage_event.php?delete=<?php echo $event['event_id']; ?>" 
+                            class="btn btn-sm btn-danger" title="Delete"
+                            onclick="return confirm('Are you sure you want to delete this event? This will also remove all registrations and tickets.')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+
+                            <!-- Manage Attendance -->
+                            <a href="attendance.php?event_id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-info" title="Attendance">
+                                <i class="fas fa-user-check"></i>
+                            </a>
+                        </div>
+                    </td>
+
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
