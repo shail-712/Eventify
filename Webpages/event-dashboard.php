@@ -77,12 +77,12 @@ $all_events_result = $conn->query($all_events_query);
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 40px;
+      padding: 30px 50px; /* Increased padding */
       background: linear-gradient(90deg, #4e1c89, #5e2ced);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .top-header .logo {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
       color: #ffffff;
       text-decoration: none;
@@ -95,9 +95,9 @@ $all_events_result = $conn->query($all_events_query);
     .top-header .nav a {
       text-decoration: none;
       font-weight: 300;
-      font-size: 15px;
+      font-size: 16px;
       color: #ffffff;
-      padding: 8px 18px;
+      padding: 10px 20px;
       border: 2px solid #ffffff;
       border-radius: 25px;
       transition: all 0.3s ease;
