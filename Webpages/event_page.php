@@ -154,6 +154,7 @@ function formatReviewDate($date) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         .hero-section {
             background-color: #6c5ce7;
@@ -304,40 +305,6 @@ function formatReviewDate($date) {
         font-style: italic;
     }
 
-    .gallery-navigation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: absolute;
-        bottom: 50%;
-        transform: translateY(50%);
-        width: 100%;
-        padding: 0 20px;
-    }
-
-    .gallery-nav-btn {
-        background-color: rgba(255, 255, 255, 0.7);
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    .gallery-nav-btn:hover {
-        background-color: rgba(255, 255, 255, 0.9);
-    }
-
-    #image-counter {
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-    }
     /* Main layout for the event page */
 .event-content-layout {
     display: flex;
@@ -415,15 +382,11 @@ function formatReviewDate($date) {
     padding: 20px;
 }
 
-#image-counter {
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+.register-button-container{
+    display: flex;
+    justify-content: center;
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -533,9 +496,8 @@ function formatReviewDate($date) {
         
                 <?php if ($totalImages > 1): ?>
                 <div class="gallery-navigation">
-                    <button id="prev-image" class="gallery-nav-btn"><i class="fas fa-chevron-left"></i></button>
-                    <span id="image-counter">1 / <?php echo $totalImages; ?></span>
-                    <button id="next-image" class="gallery-nav-btn"><i class="fas fa-chevron-right"></i></button>
+                    <button id="prev-image" class="gallery-nav-btn"><i class="fa fa-chevron-left"></i></button>
+                    <button id="next-image" class="gallery-nav-btn"><i class="fa fa-chevron-right"></i></button>
                 </div>
                 <?php endif; ?>
             </div>
@@ -566,16 +528,16 @@ function formatReviewDate($date) {
                                 <h3 class="display-6 fw-bold text-primary"><?php echo formatPrice($event['ticket_price']); ?></h3>
                             </div>
         
-                            <div class="d-grid mb-3">
-                            <?php if ($is_logged_in): ?>
-    <form action="process_registration.php" method="post">
-        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-        <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
-        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
-    </form>
-<?php else: ?>
-    <a href="login.php?redirect=event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
-<?php endif; ?>
+                            <div class="d-grid mb-3 register-button-container">
+                                <?php if ($is_logged_in): ?>
+                                    <form action="process_registration.php" method="post">
+                                        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                        <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
+                                        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="login.php?redirect=event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
+                                <?php endif; ?>
                             </div>
         
                             <div class="text-center">
@@ -919,7 +881,6 @@ function formatReviewDate($date) {
             
             const currentGalleryImage = document.getElementById('current-gallery-image');
             const imageCaption = document.getElementById('image-caption');
-            const imageCounter = document.getElementById('image-counter');
             const prevButton = document.getElementById('prev-image');
             const nextButton = document.getElementById('next-image');
             
@@ -938,7 +899,6 @@ function formatReviewDate($date) {
             function updateImage() {
                 currentGalleryImage.src = allImages[currentImageIndex].path;
                 imageCaption.textContent = allImages[currentImageIndex].caption;
-                imageCounter.textContent = `${currentImageIndex + 1} / ${totalImages}`;
             }
         });
     </script>

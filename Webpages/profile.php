@@ -59,7 +59,7 @@ if (isset($_POST['update_profile'])) {
         
         // Process profile image if uploaded
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['size'] > 0) {
-            $target_dir = "uploads/profile_images/";
+            $target_dir = "../images/uploads/profile_images/";
             
             // Create directory if it doesn't exist
             if (!file_exists($target_dir)) {
