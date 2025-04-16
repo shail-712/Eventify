@@ -567,14 +567,15 @@ function formatReviewDate($date) {
                             </div>
         
                             <div class="d-grid mb-3">
-                                <?php if ($is_logged_in): ?>
-                                    <form action="process_registration.php" method="post">
-                                        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-                                        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
-                                    </form>
-                                <?php else: ?>
-                                    <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
-                                <?php endif; ?>
+                            <?php if ($is_logged_in): ?>
+    <form action="process_registration.php" method="post">
+        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+        <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
+        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+    </form>
+<?php else: ?>
+    <a href="login.php?redirect=event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
+<?php endif; ?>
                             </div>
         
                             <div class="text-center">
