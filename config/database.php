@@ -110,15 +110,6 @@ $tables = [
         review_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (event_id) REFERENCES Events(event_id),
         FOREIGN KEY (user_id) REFERENCES Users(user_id)
-    )",
-    "CREATE TABLE IF NOT EXISTS Attendance (
-        attendance_id INT PRIMARY KEY AUTO_INCREMENT,
-        ticket_id INT,
-        check_in_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        check_in_by INT,
-        notes TEXT,
-        FOREIGN KEY (ticket_id) REFERENCES Tickets(ticket_id),
-        FOREIGN KEY (check_in_by) REFERENCES Users(user_id)
     )"
 ];
 

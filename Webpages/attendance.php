@@ -154,28 +154,158 @@ if (isset($_GET['event_id']) && !empty($_GET['event_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        .status-valid { color: #28a745; }
-        .status-used { color: #6c757d; }
-        .status-refunded { color: #dc3545; }
-        .status-cancelled { color: #dc3545; }
-        .attendance-count {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 1rem;
+                /* Global Styles */
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            color: #333;
+            min-height: 100vh;
         }
-        .search-box {
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .event-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .event-table th,
+        .event-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .event-table th {
+            background-color: #7028e4;
+            color: white;
+            font-weight: 500;
+        }
+
+        .event-table td {
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        .event-table tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        .event-table tr:hover td {
+            background-color: #f0f0f5;
+        }
+
+        button {
+            background: linear-gradient(135deg, #7028e4 0%, #1e5ae0 100%);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:active {
+            opacity: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            color: #333;
+            font-size: 15px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .input-field:focus {
+            border-color: #7028e4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(112, 40, 228, 0.2);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        footer a {
+            color: #1e5ae0;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Add a header banner similar to the image */
+        .header-banner {
+            background: linear-gradient(135deg, #7028e4 0%, #1e5ae0 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
             margin-bottom: 20px;
         }
-        .attendee-card {
-            border-left: 4px solid transparent;
-            margin-bottom: 10px;
+
+        .header-banner h2 {
+            margin: 0;
+            font-weight: 500;
         }
-        .attendee-card.checked-in {
-            border-left-color: #28a745;
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .event-table th, .event-table td {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            button {
+                padding: 10px 16px;
+            }
         }
-        .attendee-card.cancelled {
-            border-left-color: #dc3545;
-        }
+
     </style>
 </head>
 <body>
