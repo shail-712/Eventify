@@ -156,6 +156,47 @@ function formatReviewDate($date) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+        .top-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, #4e1c89, #5e2ced);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .top-header .logo {
+            font-size: 28px;
+            text-decoration: none;
+            font-family: "Anton SC", serif;
+            font-weight: 400;
+            font-style: normal;
+            color: white;
+
+        }
+        .top-header .nav {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .top-header .nav a {
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #ffffff;
+            padding: 8px 18px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .top-header .nav a:hover {
+            background-color: #ffffff;
+            color: #5e2ced;
+        }
+
         .hero-section {
             background-color: #6c5ce7;
             color: white;
@@ -388,6 +429,7 @@ function formatReviewDate($date) {
 }
 
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .event-content-layout {
@@ -406,36 +448,21 @@ function formatReviewDate($date) {
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php">Eventify</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="search_events.php">Events</a>
-                    </li>
-                    <?php if ($is_logged_in): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="profile.php">My Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div class="top-header">
+    <a href="/" class="logo">EVENTIFY</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
+</div>
 
     <!-- Hero Section -->
     <section class="hero-section text-center event-hero" style="background-image: url('../images/uploads/events/<?php echo $event['banner_image']; ?>');">
