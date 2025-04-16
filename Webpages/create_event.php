@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $end_datetime = $end_date . ' ' . $end_time . ':00';
     
     // Handle file uploads
-    $upload_dir = "..images/uploads/events/";
+    $upload_dir = "../images/uploads/events/";
     
     // Ensure upload directory exists
     if (!is_dir($upload_dir)) {

@@ -217,7 +217,7 @@ $stmt->close();
                                 <td>
                         <div class="btn-group">
                             <!-- View Event -->
-                            <a href="search_events.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-primary" title="View">
+                            <a href="event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-sm btn-primary" title="View">
                                 <i class="fas fa-eye"></i>
                             </a>
 

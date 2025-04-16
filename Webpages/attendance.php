@@ -359,26 +359,6 @@ if (isset($_GET['event_id']) && !empty($_GET['event_id'])) {
                     </ul>
                 </div>
                 
-                <?php if ($selected_event): ?>
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>Quick Check-in</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="attendance.php?event_id=<?php echo $event_id; ?>" method="post" id="quickCheckIn">
-                            <div class="mb-3">
-                                <label for="ticketCode" class="form-label">Ticket Code/ID</label>
-                                <input type="number" class="form-control" id="ticketCode" name="ticket_id" placeholder="Enter ticket ID">
-                            </div>
-                            <div class="mb-3">
-                                <label for="notes" class="form-label">Notes (Optional)</label>
-                                <textarea class="form-control" id="notes" name="notes" rows="2"></textarea>
-                            </div>
-                            <button type="submit" name="mark_attendance" class="btn btn-primary">Check In</button>
-                        </form>
-                    </div>
-                </div>
-                <?php endif; ?>
             </div>
             
             <div class="col-md-8">

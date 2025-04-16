@@ -80,6 +80,7 @@ if (!$stmt->execute()) {
     <div class="loader"></div>
     <div class="message" id="success-message">
       You have successfully registered for <strong><?php echo $event_name; ?></strong>. Can't wait to see you there!
+      
     </div>
   </div>
 
