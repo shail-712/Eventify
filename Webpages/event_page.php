@@ -83,6 +83,18 @@ session_start();
 $is_logged_in = isset($_SESSION['user_id']);
 $current_user_id = $is_logged_in ? $_SESSION['user_id'] : 0;
 
+// Check if user is registered for this event
+$is_registered = false;
+if ($is_logged_in) {
+    $sql_registration = "SELECT COUNT(*) as count FROM EventRegistrations 
+                WHERE user_id = ? AND event_id = ?";
+    $stmt_registration = $conn->prepare($sql_registration);
+    $stmt_registration->bind_param("ii", $current_user_id, $event_id);
+    $stmt_registration->execute();
+    $registration_result = $stmt_registration->get_result();
+    $registration_data = $registration_result->fetch_assoc();
+    $is_registered = ($registration_data['count'] > 0);
+}
 // Check if the user has attended this event
 $has_attended = false;
 if ($is_logged_in) {
@@ -449,7 +461,7 @@ function formatReviewDate($date) {
 <body>
     <!-- Navbar -->
     <div class="top-header">
-    <a href="/" class="logo">EVENTIFY</a>
+    <a href="../index.php" class="logo">EVENTIFY</a>
     <ul class="nav">
         <li><a href="../index.php">Home</a></li>
         <li><a href="event_page.php">Events</a></li>
@@ -557,11 +569,15 @@ function formatReviewDate($date) {
         
                             <div class="d-grid mb-3 register-button-container">
                                 <?php if ($is_logged_in): ?>
-                                    <form action="process_registration.php" method="post">
-                                        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-                                        <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
-                                        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
-                                    </form>
+                                    <?php if ($is_registered): ?>
+                                        <button type="button" class="btn btn-lg" disabled style="background-color: white; color: #6c5ce7; border-color: #6c5ce7;">Registered</button>
+                                    <?php else: ?>
+                                        <form action="process_registration.php" method="post">
+                                            <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                            <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
+                                            <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+                                        </form>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <a href="login.php?redirect=event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
                                 <?php endif; ?>
@@ -583,11 +599,7 @@ function formatReviewDate($date) {
                                     <h5 class="mb-1"><?php echo htmlspecialchars($event['organizer_name']); ?></h5>
                                     <p class="text-muted mb-0 small">Event Organizer</p>
                                 </div>
-                            </div>
-                            <hr>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactOrganizerModal">Contact Organizer</button>
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 </div>
@@ -746,24 +758,7 @@ function formatReviewDate($date) {
                             </div>
                         </div>
                     </div>
-                    
-                    <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="text-center">
-                        <p>Don't see the answer you're looking for? Ask a question</p>
-                        <form action="submit_question.php" method="post">
-                            <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="questionTextarea" name="question" style="height: 100px" required></textarea>
-                                <label for="questionTextarea">Your question</label>
-                            </div>
-                            <button type="submit" class="btn primary-btn text-white">Submit Question</button>
-                        </form>
-                    </div>
-                    <?php else: ?>
-                    <div class="text-center">
-                        <p>Please <a href="login.php">login</a> to ask questions about this event.</p>
-                    </div>
-                    <?php endif; ?>
+            
                 </div>
             </div>
         </section>
@@ -791,7 +786,7 @@ function formatReviewDate($date) {
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
-                            <a href="event.php?id=<?php echo $rel_event['event_id']; ?>" class="btn btn-outline-primary w-100">View Details</a>
+                            <a href="event_page.php?id=<?php echo $rel_event['event_id']; ?>" class="btn btn-outline-primary w-100">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -838,47 +833,6 @@ function formatReviewDate($date) {
         </div>
     </footer>
 
-    <!-- Contact Organizer Modal -->
-    <div class="modal fade" id="contactOrganizerModal" tabindex="-1" aria-labelledby="contactOrganizerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactOrganizerModalLabel">Contact <?php echo htmlspecialchars($event['organizer_name']); ?></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="send_message.php" method="post">
-                        <input type="hidden" name="organizer_id" value="<?php echo $event['organizer_id']; ?>">
-                        <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
-                        
-                        <div class="mb-3">
-                            <label for="message-subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="message-subject" name="subject" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-text" class="form-label">Message</label>
-                            <textarea class="form-control" id="message-text" name="message" rows="5" required></textarea>
-                        </div>
-                        
-                        <?php if (!$is_logged_in): ?>
-                        <div class="mb-3">
-                            <label for="message-name" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="message-name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-email" class="form-label">Your Email</label>
-                            <input type="email" class="form-control" id="message-email" name="email" required>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn primary-btn text-white">Send Message</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
