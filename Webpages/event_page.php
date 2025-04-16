@@ -96,6 +96,7 @@ if ($is_logged_in) {
     $is_registered = ($registration_data['count'] > 0);
 }
 // Check if the user has attended this event
+$has_reviewed = false;
 $has_attended = false;
 if ($is_logged_in) {
     $sql_attendance = "SELECT COUNT(*) as count FROM EventRegistrations 
@@ -139,14 +140,15 @@ function truncateText($text, $length) {
 }
 
 function displayStarRating($rating) {
-    $output = '';
+    $output = '<div class="review-stars">'; // Different class name
     for ($i = 1; $i <= 5; $i++) {
         if ($i <= $rating) {
-            $output .= '<i class="bi bi-star-fill text-warning"></i>';
+            $output .= '<i class="fa fa-star text-warning"></i>';
         } else {
-            $output .= '<i class="bi bi-star text-warning"></i>';
+            $output .= '<i class="fa fa-star-o text-warning"></i>';
         }
     }
+    $output .= '</div>';
     return $output;
 }
 
@@ -291,6 +293,9 @@ function formatReviewDate($date) {
         
         .rating-container {
             font-size: 1.5rem;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
         }
         
         .rating-input {
@@ -629,7 +634,7 @@ function formatReviewDate($date) {
                             <div class="card review-card mb-3">
                                 <div class="card-body">
                                     <div class="d-flex mb-3">
-                                        <img src="..images/uploads/profile_images/user_<?php echo $review['user_id']; ?>.jpg" 
+                                        <img src="../images/uploads/profile_images/user_<?php echo $review['user_id']; ?>.jpg" 
                                              onerror="this.src='../images/default-pfp.png'" 
                                              alt="<?php echo htmlspecialchars($review['reviewer_name']); ?>" 
                                              class="review-avatar me-3">
@@ -652,7 +657,7 @@ function formatReviewDate($date) {
                         <?php endif; ?>
                         
                         <!-- Review Form -->
-                        <?php if ($is_logged_in && $has_attended && !isset($has_reviewed)): ?>
+                        <?php if ($is_logged_in && $has_attended && !$has_reviewed): ?>
                         <div class="card mt-4">
                             <div class="card-header bg-light">
                                 <h5 class="mb-0">Share your experience</h5>
@@ -663,21 +668,22 @@ function formatReviewDate($date) {
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Rating</label>
-                                        <div class="rating-container">
-                                            <input type="radio" id="star5" name="rating" value="5" class="rating-input">
-                                            <label for="star5" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                        <div class="rating-container" style="display: flex; flex-direction: row-reverse; justify-content: flex-end;">
+                                            <!-- Note the values now match the visual order -->
+                                            <input type="radio" id="star5" name="rating" value="1" class="rating-input">
+                                            <label for="star5" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star4" name="rating" value="4" class="rating-input">
-                                            <label for="star4" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star4" name="rating" value="2" class="rating-input">
+                                            <label for="star4" class="rating-label"><i class="fa fa-star"></i></label>
                                             
                                             <input type="radio" id="star3" name="rating" value="3" class="rating-input">
-                                            <label for="star3" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <label for="star3" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star2" name="rating" value="2" class="rating-input">
-                                            <label for="star2" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star2" name="rating" value="4" class="rating-input">
+                                            <label for="star2" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star1" name="rating" value="1" class="rating-input">
-                                            <label for="star1" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star1" name="rating" value="5" class="rating-input">
+                                            <label for="star1" class="rating-label"><i class="fa fa-star"></i></label>
                                         </div>
                                     </div>
                                     
@@ -690,7 +696,7 @@ function formatReviewDate($date) {
                                 </form>
                             </div>
                         </div>
-                        <?php elseif ($is_logged_in && isset($has_reviewed) && $has_reviewed): ?>
+                        <?php elseif ($is_logged_in && $has_reviewed): ?>
                         <div class="alert alert-success mt-4">
                             <i class="bi bi-check-circle me-2"></i>Thank you for reviewing this event!
                         </div>
@@ -702,7 +708,7 @@ function formatReviewDate($date) {
                         <div class="card mt-4">
                             <div class="card-body text-center">
                                 <p class="mb-2">Want to share your experience?</p>
-                                <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-outline-primary">Login to Leave a Review</a>
+                                <a href="login.php?redirect=event_page.php?id=<?php echo $event_id; ?>" class="btn btn-outline-primary">Login to Leave a Review</a>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -841,17 +847,22 @@ function formatReviewDate($date) {
     <script>
         // Reverse the star rating labels to show in the correct order
         document.addEventListener('DOMContentLoaded', function() {
-            const ratingContainer = document.querySelector('.rating-container');
+            const ratingContainer = document.querySelector('form .rating-container');
             if (ratingContainer) {
-                const stars = Array.from(ratingContainer.querySelectorAll('.rating-label'));
-                stars.reverse();
+                // Store all elements before clearing
+                const inputs = Array.from(ratingContainer.querySelectorAll('.rating-input'));
+                const labels = Array.from(ratingContainer.querySelectorAll('.rating-label'));
                 
-                // Adjust the display to show in reverse order
+                // Reverse the arrays
+                inputs.reverse();
+                labels.reverse();
+                
+                // Clear and rebuild
                 ratingContainer.innerHTML = '';
-                stars.forEach(star => {
-                    ratingContainer.appendChild(star.previousElementSibling); // Add input
-                    ratingContainer.appendChild(star); // Add label
-                });
+                for (let i = 0; i < inputs.length; i++) {
+                    ratingContainer.appendChild(inputs[i]);
+                    ratingContainer.appendChild(labels[i]);
+                }
             }
         });
 
@@ -891,6 +902,7 @@ $stmt->close();
 $stmt_reg->close();
 $stmt_reviews->close();
 $stmt_related->close();
+if (isset($stmt_registration)) $stmt_registration->close();
 if (isset($stmt_attendance)) $stmt_attendance->close();
 if (isset($stmt_user_review)) $stmt_user_review->close();
 $conn->close();

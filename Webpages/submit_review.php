@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
 
 // Validate form submission
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: events.php');
+    header('Location: search_events.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ $comment = isset($_POST['comment']) ? trim($_POST['comment']) : '';
 // Validate data
 if ($event_id <= 0 || $rating < 1 || $rating > 5 || empty($comment)) {
     $_SESSION['error_message'] = "Please provide a valid rating and comment.";
-    header("Location: event.php?id=$event_id");
+    header("Location: event_page.php?id=$event_id");
     exit;
 }
 
@@ -54,7 +54,7 @@ $row_review = $result_review->fetch_assoc();
 
 if ($row_review['count'] > 0) {
     $_SESSION['error_message'] = "You have already submitted a review for this event.";
-    header("Location: event.php?id=$event_id");
+    header("Location: event_page.php?id=$event_id");
     exit;
 }
 
@@ -77,6 +77,6 @@ $stmt_insert->close();
 $conn->close();
 
 // Redirect back to the event page
-header("Location: event.php?id=$event_id");
+header("Location: event_page.php?id=$event_id");
 exit;
 ?>
