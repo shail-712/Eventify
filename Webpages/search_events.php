@@ -92,6 +92,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     <ul class="nav">
         <li><a href="../index.php">Home</a></li>
         <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
         <li><a href="about.php">About</a></li>
         <?php if (isset($_SESSION['user_id'])): ?>
             <li><a href="profile.php">My Profile</a></li>

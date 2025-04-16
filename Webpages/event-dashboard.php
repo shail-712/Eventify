@@ -152,7 +152,6 @@ $all_events_result = $conn->query($all_events_query);
       <li><a href="../index.php">Home</a></li>
       <li><a href="search_events.php">Events</a></li>
       <li><a href="about.php">About</a></li>
-      <li><a href="contact.php">Contact</a></li>
       <li><a href="profile.php">My Profile</a></li>
       <li><a href="logout.php">Logout</a></li>
     </ul>
