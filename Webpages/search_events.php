@@ -1,6 +1,8 @@
-<?php
-include '../config/database.php';
 
+<?php
+// search_events.php
+include '../config/database.php';
+session_start();
 // Query to fetch events with category and organizer information
 $sql = "SELECT e.*, c.category_name, u.name as organizer_name 
         FROM Events e
@@ -8,6 +10,7 @@ $sql = "SELECT e.*, c.category_name, u.name as organizer_name
         LEFT JOIN Users u ON e.organizer_id = u.user_id
         ORDER BY e.start_time ASC";
 $result = $conn->query($sql);
+$is_logged_in = isset($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +22,53 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
     <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+        body {
+            background-color: #f8f5ff;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+        .top-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, #4e1c89, #5e2ced);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .top-header .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            text-decoration: none;
+        }
+        .top-header .nav {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .top-header .nav a {
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 15px;
+            color: #ffffff;
+            padding: 8px 18px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .top-header .nav a:hover {
+            background-color: #ffffff;
+            color: #5e2ced;
+        }
+
         .event-link {
             text-decoration: none;
             color: inherit;
@@ -37,64 +87,22 @@ $result = $conn->query($sql);
     </style>
 </head>
 <body>
-    <header class="d-flex flex-wrap justify-content-center py-5 mb-4 head">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-          <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
-          <span class="fs-1 logo">Eventify</span>
-        </a>
-        <ul class="nav nav-pills">
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Events</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Blog</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">About</a></li>
-          <li class="nav-item header-buttons"><a href="#" class="nav-link">Contact</a></li>
-          <li class="nav-item header-buttons login"><a href="login.php" class="nav-link">Login</a></li>
-        </ul>
-    </header>
+<div class="top-header">
+    <a href="/" class="logo">Eventify</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
+</div>
 
-    <div class="container mt-4">
-        <div class="d-flex align-items-center justify-content-between py-5">
-            <h2 class="fw-bold text-dark">Upcoming Events</h2>
 
-            <div class="d-flex gap-4">
-                <!-- Weekdays Dropdown -->
-                <select class="form-select filter-dropdown px-5 select options" aria-label="Weekdays" id="weekday-filter">
-                    <option selected value="all">Weekdays</option>
-                    <option value="weekend">Weekend</option>
-                    <option value="1">Monday</option>
-                    <option value="2">Tuesday</option>
-                    <option value="3">Wednesday</option>
-                    <option value="4">Thursday</option>
-                    <option value="5">Friday</option>
-                    <option value="6">Saturday</option>
-                    <option value="0">Sunday</option>
-                </select>
-
-                <!-- Event Type Dropdown -->
-                <select class="form-select filter-dropdown px-5 select options" aria-label="Event Type" id="event-type-filter">
-                    <option selected value="all">Event Type</option>
-                    <option value="Conference">Conference</option>
-                    <option value="Workshop">Workshop</option>
-                    <option value="Meetup">Meetup</option>
-                </select>
-
-                <!-- Category Dropdown -->
-                <select class="form-select filter-dropdown px-5 select options" aria-label="Category" id="category-filter">
-                    <option selected value="all">Category</option>
-                    <?php
-                    // Fetch categories for the dropdown
-                    $cat_sql = "SELECT * FROM EventCategories ORDER BY category_name";
-                    $cat_result = $conn->query($cat_sql);
-                    
-                    if ($cat_result->num_rows > 0) {
-                        while($cat_row = $cat_result->fetch_assoc()) {
-                            echo '<option value="' . $cat_row["category_id"] . '">' . $cat_row["category_name"] . '</option>';
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-    </div>
 
     <div class="album py-5 bg-body-tertiary">
         <div class="container">
@@ -107,12 +115,25 @@ $result = $conn->query($sql);
                         $event_date = new DateTime($row["start_time"]);
                         $month = $event_date->format('M');
                         $day = $event_date->format('d');
+                        $event_timestamp = $event_date->getTimestamp();
+                        
+                        // Get event year, month, week for filtering
+                        $event_year = $event_date->format('Y');
+                        $event_month = $event_date->format('Y-m');
+                        $event_week = date('Y-W', $event_timestamp);
                         
                         // Generate event card with clickable link
                         echo '
                         <div class="col event-card" 
-                            data-day="' . $event_date->format('w') . '" 
-                            data-category="' . $row["category_id"] . '">
+                            data-date="' . $event_date->format('Y-m-d') . '" 
+                            data-timestamp="' . $event_timestamp . '"
+                            data-year="' . $event_year . '"
+                            data-month="' . $event_month . '"
+                            data-week="' . $event_week . '"
+                            data-category="' . $row["category_id"] . '"
+                            data-title="' . strtolower(htmlspecialchars($row["title"])) . '"
+                            data-description="' . strtolower(htmlspecialchars($row["description"])) . '"
+                            data-location="' . strtolower(htmlspecialchars($row["location"])) . '">
                             <a href="event_page.php?id=' . $row["event_id"] . '" class="event-link">
                                 <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
                                     <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -148,38 +169,70 @@ $result = $conn->query($sql);
                 $conn->close();
                 ?>
             </div>
+            <div id="no-results" class="alert alert-info text-center mt-4" style="display: none;">
+                No events match your search criteria.
+            </div>
         </div>
     </div>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Get filter elements
-        const weekdayFilter = document.getElementById('weekday-filter');
+        const timeFilter = document.getElementById('time-filter');
         const categoryFilter = document.getElementById('category-filter');
-        const eventTypeFilter = document.getElementById('event-type-filter');
+        const searchInput = document.getElementById('event-search');
+        const searchButton = document.getElementById('search-button');
         
         // Add event listeners to filters
-        weekdayFilter.addEventListener('change', filterEvents);
+        timeFilter.addEventListener('change', filterEvents);
         categoryFilter.addEventListener('change', filterEvents);
-        eventTypeFilter.addEventListener('change', filterEvents);
+        searchButton.addEventListener('click', filterEvents);
+        searchInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filterEvents();
+            }
+        });
         
         function filterEvents() {
-            const selectedDay = weekdayFilter.value;
+            const selectedTime = timeFilter.value;
             const selectedCategory = categoryFilter.value;
-            const selectedType = eventTypeFilter.value;
+            const searchTerm = searchInput.value.toLowerCase().trim();
             
             const eventCards = document.querySelectorAll('.event-card');
+            let visibleCount = 0;
+            
+            // Get current date for time-based filtering
+            const now = new Date();
+            const today = now.toISOString().split('T')[0]; // YYYY-MM-DD
+            const thisYear = now.getFullYear().toString();
+            const thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            const thisWeek = getWeekNumber(now);
             
             eventCards.forEach(card => {
-                let showByDay = true;
+                let showByTime = true;
                 let showByCategory = true;
+                let showBySearch = true;
                 
-                // Filter by day
-                if (selectedDay !== 'all') {
-                    if (selectedDay === 'weekend') {
-                        showByDay = card.dataset.day === '0' || card.dataset.day === '6';
-                    } else {
-                        showByDay = card.dataset.day === selectedDay;
+                // Filter by time
+                if (selectedTime !== 'all') {
+                    const eventDate = card.dataset.date;
+                    const eventYear = card.dataset.year;
+                    const eventMonth = card.dataset.month;
+                    const eventWeek = card.dataset.week;
+                    
+                    switch(selectedTime) {
+                        case 'today':
+                            showByTime = eventDate === today;
+                            break;
+                        case 'week':
+                            showByTime = eventWeek === thisWeek;
+                            break;
+                        case 'month':
+                            showByTime = eventMonth === thisMonth;
+                            break;
+                        case 'year':
+                            showByTime = eventYear === thisYear;
+                            break;
                     }
                 }
                 
@@ -188,13 +241,43 @@ $result = $conn->query($sql);
                     showByCategory = card.dataset.category === selectedCategory;
                 }
                 
+                // Filter by search term
+                if (searchTerm !== '') {
+                    const eventTitle = card.dataset.title || '';
+                    const eventDescription = card.dataset.description || '';
+                    const eventLocation = card.dataset.location || '';
+                    
+                    showBySearch = 
+                        eventTitle.includes(searchTerm) || 
+                        eventDescription.includes(searchTerm) || 
+                        eventLocation.includes(searchTerm);
+                }
+                
                 // Show or hide based on combined filters
-                if (showByDay && showByCategory) {
+                if (showByTime && showByCategory && showBySearch) {
                     card.style.display = 'block';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+            
+            // Show "no results" message if needed
+            const noResultsDiv = document.getElementById('no-results');
+            if (visibleCount === 0) {
+                noResultsDiv.style.display = 'block';
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
+        }
+        
+        // Helper function to get the week number (YYYY-WW format)
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const weekNumber = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return d.getUTCFullYear() + '-' + String(weekNumber).padStart(2, '0');
         }
     });
     </script>

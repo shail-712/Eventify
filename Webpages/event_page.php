@@ -268,13 +268,10 @@ function formatReviewDate($date) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="../index.php">Home</a>
+                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="events.php">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="categories.php">Categories</a>
+                        <a class="nav-link" href="search_events.php">Events</a>
                     </li>
                     <?php if ($is_logged_in): ?>
                         <li class="nav-item">

@@ -130,4 +130,24 @@ foreach ($tables as $table) {
     }
 }
 
+$check_categories = $conn->query("SELECT COUNT(*) as count FROM EventCategories");
+if ($check_categories && $check_categories->fetch_assoc()['count'] == 0) {
+    // Define the categories to add
+    $categories = [
+        ['name' => 'Music', 'description' => 'Music events, concerts, and performances'],
+        ['name' => 'Sports', 'description' => 'Sporting events, competitions, and tournaments'],
+        ['name' => 'Workshop', 'description' => 'Educational workshops and hands-on learning sessions'],
+        ['name' => 'Conference', 'description' => 'Professional conferences, meetings, and seminars'],
+        ['name' => 'Festival', 'description' => 'Cultural and entertainment festivals']
+    ];
+    
+    // Insert categories into the database
+    foreach ($categories as $category) {
+        $insert = $conn->prepare("INSERT INTO EventCategories (category_name, description) VALUES (?, ?)");
+        $insert->bind_param("ss", $category['name'], $category['description']);
+        $insert->execute();
+        $insert->close();
+    }
+}
+
 ?>
