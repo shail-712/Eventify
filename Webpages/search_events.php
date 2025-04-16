@@ -22,6 +22,7 @@ $is_logged_in = isset($_SESSION['user_id']);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../style.css">
     <style>
+        
         .event-link {
             text-decoration: none;
             color: inherit;

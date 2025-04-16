@@ -167,6 +167,103 @@ $result = $conn->query($sql);
     </div>
 </div>
 
+<!-- Create Event Section -->
+<style>
+        .feature-icon {
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .event-promo-section {
+            text-align: center;
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        
+        .features-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn-create-event {
+            margin-top: 30px;
+        }
+        
+        .section-description {
+            max-width: 700px;
+            margin: 0 auto 40px auto;
+        }
+    </style>
+</head>
+<body>
+    <section class="event-promo-section">
+        <div class="container">
+            <h2 class="fw-bold mb-4">Have an event in mind?</h2>
+            
+            <p class="lead section-description">
+                Share your event with our community. Whether it's a conference, workshop, or social gathering, 
+                Eventify makes it easy to create and promote your events.
+            </p>
+            
+            <div class="features-container">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar-plus" viewBox="0 0 16 16">
+                            <path d="M8 7a.5.5 0 0 1 .5.5V9H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V10H6a.5.5 0 0 1 0-1h1.5V7.5A.5.5 0 0 1 8 7z"/>
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Simple creation process</h5>
+                        <p class="text-muted mb-0">Create your event in minutes with our intuitive form</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022ZM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816ZM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0Zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Reach your audience</h5>
+                        <p class="text-muted mb-0">Connect with attendees interested in your event type</p>
+                    </div>
+                </div>
+                
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-graph-up" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm14.817 3.113a.5.5 0 0 1 .07.704l-4.5 5.5a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61 4.15-5.073a.5.5 0 0 1 .704-.07Z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Track participation</h5>
+                        <p class="text-muted mb-0">Monitor registrations and manage your event</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="Webpages/create_event.php" class="btn btn-primary btn-lg btn-create-event">Create Event</a>
+            </div>
+        </div>
+    </section>
+
 <?php $conn->close(); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
