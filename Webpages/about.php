@@ -131,10 +131,12 @@
     <div class="top-header">
         <a href="/" class="logo">Eventify</a>
         <ul class="nav">
-            <li><a href="Webpages/event_page.php">Events</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="Webpages/login.php">Login</a></li>
+            
+            <li><a href="../index.php">Home</a></li>
+            <li><a href="event_page.php">Events</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="">Contact</a></li>
+            <li><a href="login.php">Login</a></li>
         </ul>
     </div>
 
