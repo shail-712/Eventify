@@ -189,6 +189,7 @@ $conn->close();
     <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
         * {
             margin: 0;
             padding: 0;
@@ -207,20 +208,44 @@ $conn->close();
             margin: 0 auto;
             padding: 20px;
         }
-        
-        header {
-            background-color: #4a6fdc;
-            color: white;
-            padding: 10px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        .top-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        background: linear-gradient(90deg, #4e1c89, #5e2ced);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .top-header .logo {
+        font-family: "Anton SC", serif;
+        font-size: 28px;
+        font-weight: 800;
+        color: #ffffff;
+        text-decoration: none;
         }
-        
+        .top-header .nav {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        }
+        .top-header .nav a {
+        text-decoration: none;
+        font-weight: 300;
+        font-size: 15px;
+        color: #ffffff;
+        padding: 8px 18px;
+        border: 2px solid #ffffff;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        background-color: transparent;
+        }
+        .top-header .nav a:hover {
+        background-color: #ffffff;
+        color: #5e2ced;
+        }
+                
         .logo {
             font-size: 24px;
             font-weight: bold;
@@ -494,37 +519,25 @@ $conn->close();
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php">Eventify</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="search_events.php">Events</a>
-                    </li>
-                    <?php if ($is_logged_in): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="profile.php">My Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+    <div class="top-header">
+        <a href="../index.php" class="logo">Eventify</a>
+        <ul class="nav">
+            <li><a href="../index.php">Home</a></li>
+            <li><a href="event_page.php">Events</a></li>
+            <li><a href="event-dashboard.php">Dashboard</a></li>
+            <li><a href="about.php">About</a></li>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'organizer' || $_SESSION['role'] == 'admin')): ?>
+                    <li><a href="manage_event.php">Manage Events</a></li>
+                <?php endif; ?>
+                <li><a href="profile.php">My Profile</a></li>
+        
+                <li><a href="logout.php">Logout</a></li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
+            <?php endif; ?>
+        </ul>
+    </div>
     <div class="container">
         <div class="profile-container">
             <div class="profile-sidebar">

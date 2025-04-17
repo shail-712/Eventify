@@ -1,4 +1,5 @@
 <?php
+//create_event.php
 // Start session to maintain user login state
 session_start();
 

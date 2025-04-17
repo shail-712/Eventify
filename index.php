@@ -73,26 +73,6 @@ $result = $conn->query($sql);
         <h2 class="fw-bold text-dark">Upcoming Events</h2>
 
         <div class="d-flex gap-4">
-            <!-- Weekdays Dropdown -->
-            <select class="form-select filter-dropdown px-5 select options" aria-label="Weekdays">
-                <option selected>Weekdays</option>
-                <option>Weekend</option>
-                <option value="1">Monday</option>
-                <option value="2">Tuesday</option>
-                <option value="3">Wednesday</option>
-                <option value="4">Thursday</option>
-                <option value="5">Friday</option>
-                <option value="6">Saturday</option>
-                <option value="0">Sunday</option>
-            </select>
-
-            <!-- Event Type Dropdown -->
-            <select class="form-select filter-dropdown px-5 select options" aria-label="Event Type">
-                <option disabled selected>Event Type</option>
-                <option value="1">Conference</option>
-                <option value="2">Workshop</option>
-                <option value="3">Meetup</option>
-            </select>
 
             <!-- Category Dropdown -->
             <select class="form-select filter-dropdown px-5 select options" aria-label="Category">
