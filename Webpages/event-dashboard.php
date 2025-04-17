@@ -66,6 +66,8 @@ $all_events_result = $conn->query($all_events_query);
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
     * {
       margin: 0;
       padding: 0;
@@ -82,6 +84,7 @@ $all_events_result = $conn->query($all_events_query);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
     .top-header .logo {
+      font-family: "Anton SC", serif;
       font-size: 28px;
       font-weight: 800;
       color: #ffffff;
@@ -154,7 +157,11 @@ $all_events_result = $conn->query($all_events_query);
         <li><a href="event-dashboard.php">Dashboard</a></li>
         <li><a href="about.php">About</a></li>
         <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'organizer' || $_SESSION['role'] == 'admin')): ?>
+                <li><a href="manage_event.php">Manage Events</a></li>
+            <?php endif; ?>
             <li><a href="profile.php">My Profile</a></li>
+      
             <li><a href="logout.php">Logout</a></li>
         <?php else: ?>
             <li><a href="login.php">Login</a></li>
