@@ -218,7 +218,16 @@ $all_events_result = $conn->query($all_events_query);
     </div>
   </div>
 </div>
+
 <button class="scroll-top" id="scrollTopBtn">&#8679;</button>
+
+<footer style="background-color: #5e2ced; color: white; padding: 30px; margin-top: 60px; text-align: center;">
+  <h3 style="margin-bottom: 10px;">Contact Us</h3>
+  <p>Email: support@eventify.com</p>
+  <p>Phone: +91-98765-43210</p>
+  <p>Address: Ghatkopar, Mumbai, India</p>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js"></script>
 <script>
@@ -253,6 +262,7 @@ $all_events_result = $conn->query($all_events_query);
     });
     calendar.render();
   });
+  
 </script>
 </body>
 </html>

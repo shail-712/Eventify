@@ -712,6 +712,13 @@ $conn->close();
         </div>
     </div>
 
+    <footer style="background-color: #5e2ced; color: white; padding: 30px; margin-top: 60px; text-align: center;">
+        <h3 style="margin-bottom: 10px;">Contact Us</h3>
+        <p>Email: support@eventify.com</p>
+        <p>Phone: +91-98765-43210</p>
+        <p>Address: Ghatkopar, Mumbai, India</p>
+    </footer>
+
     <script>
         // Show the selected tab
         function showTab(tabId) {

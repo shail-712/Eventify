@@ -1,10 +1,6 @@
 <?php
 session_start();
-<<<<<<< HEAD
 include('database.php');
-=======
-require_once '../config/database.php';
->>>>>>> 61750a6b263b32fd7db753c6573f1f46d63635cd
 
 // Ensure user is logged in and event ID is provided
 if (!isset($_SESSION['user_id']) || !isset($_POST['event_id'])) {
@@ -83,16 +79,21 @@ if (!$stmt->execute()) {
   <div class="loader-container">
     <div class="loader"></div>
     <div class="message" id="success-message">
-      You have successfully registered for <strong><?php echo $event_name; ?></strong>. Can't wait to see you there!
-      
+      You have successfully registered for <strong><?php echo htmlspecialchars($event_name); ?></strong>. Can't wait to see you there!
     </div>
   </div>
 
   <script>
+  // First phase: Show loader
+  setTimeout(() => {
+    document.querySelector('.loader').style.display = 'none';
+    document.getElementById('success-message').style.display = 'block';
+    
+    // Second phase: After showing the success message, redirect to event page
     setTimeout(() => {
-      document.querySelector('.loader').style.display = 'none';
-      document.getElementById('success-message').style.display = 'block';
-    }, 5000); // Adjusts the time until the message appears
-  </script>
+      window.location.href = 'event_page.php'; 
+    }, 3000); // Redirect after 3 seconds of showing the success message
+  }, 2000); // Show loader for 2 seconds
+</script>
 </body>
 </html>
