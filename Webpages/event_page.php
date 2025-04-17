@@ -1,4 +1,5 @@
 <?php
+//search_event.php
 include '../config/database.php';
 
 // Get event ID from URL parameter
