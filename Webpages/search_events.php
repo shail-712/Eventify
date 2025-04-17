@@ -88,7 +88,7 @@ $is_logged_in = isset($_SESSION['user_id']);
 </head>
 <body>
 <div class="top-header">
-    <a href="/" class="logo">Eventify</a>
+    <a href="/" class="logo">EVENTIFY</a>
     <ul class="nav">
         <li><a href="../index.php">Home</a></li>
         <li><a href="event_page.php">Events</a></li>
@@ -102,7 +102,58 @@ $is_logged_in = isset($_SESSION['user_id']);
         <?php endif; ?>
     </ul>
 </div>
-
+<!-- Add this below the top header and above the album section -->
+<div class="search-container py-4 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow-sm rounded-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="event-search" class="form-control border-start-0" placeholder="Search events...">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="time-filter" class="form-select">
+                                    <option value="all">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="year">This Year</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <select id="category-filter" class="form-select">
+                                    <option value="all">All Categories</option>
+                                    <?php
+                                    // Reconnect to database to get categories
+                                    $conn = new mysqli($servername, $username, $password, $dbname);
+                                    $cat_sql = "SELECT * FROM EventCategories ORDER BY category_name";
+                                    $cat_result = $conn->query($cat_sql);
+                                    
+                                    if ($cat_result->num_rows > 0) {
+                                        while($cat_row = $cat_result->fetch_assoc()) {
+                                            echo '<option value="' . $cat_row["category_id"] . '">' . htmlspecialchars($cat_row["category_name"]) . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
     <div class="album py-5 bg-body-tertiary">
