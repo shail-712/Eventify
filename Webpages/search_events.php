@@ -89,14 +89,18 @@ $is_logged_in = isset($_SESSION['user_id']);
 </head>
 <body>
 <div class="top-header">
-    <a href="/" class="logo">EVENTIFY</a>
+    <a href="/" class="logo">Eventify</a>
     <ul class="nav">
         <li><a href="../index.php">Home</a></li>
         <li><a href="event_page.php">Events</a></li>
         <li><a href="event-dashboard.php">Dashboard</a></li>
         <li><a href="about.php">About</a></li>
         <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'organizer' || $_SESSION['role'] == 'admin')): ?>
+                <li><a href="manage_event.php">Manage Events</a></li>
+            <?php endif; ?>
             <li><a href="profile.php">My Profile</a></li>
+      
             <li><a href="logout.php">Logout</a></li>
         <?php else: ?>
             <li><a href="login.php">Login</a></li>
@@ -176,45 +180,48 @@ $is_logged_in = isset($_SESSION['user_id']);
                         $event_week = date('Y-W', $event_timestamp);
                         
                         // Generate event card with clickable link
-                        echo '
-                        <div class="col event-card" 
-                            data-date="' . $event_date->format('Y-m-d') . '" 
-                            data-timestamp="' . $event_timestamp . '"
-                            data-year="' . $event_year . '"
-                            data-month="' . $event_month . '"
-                            data-week="' . $event_week . '"
-                            data-category="' . $row["category_id"] . '"
-                            data-title="' . strtolower(htmlspecialchars($row["title"])) . '"
-                            data-description="' . strtolower(htmlspecialchars($row["description"])) . '"
-                            data-location="' . strtolower(htmlspecialchars($row["location"])) . '">
-                            <a href="event_page.php?id=' . $row["event_id"] . '" class="event-link">
-                                <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
-                                    <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
-                                        <title>' . htmlspecialchars($row["title"]) . '</title>
-                                        <rect width="100%" height="100%" fill="#55595c"></rect>
-                                        <text x="50%" y="50%" fill="#eceeef" dy=".3em">' . htmlspecialchars($row["title"]) . '</text>
-                                    </svg>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
-                                                <b class="bi bi-info-circle fs-5 date">' . $month . '</b>
-                                                <span class="fs-1 fw-bold">' . $day . '</span>
-                                            </div>
-                                            <div class="col-10">
-                                                <p><b>' . htmlspecialchars($row["title"]) . '</b></p>
-                                                <p class="card-text">
-                                                    ' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '
-                                                </p>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <small class="text-muted">Location: ' . htmlspecialchars($row["location"]) . '</small>
-                                                    <small class="text-muted">' . htmlspecialchars($row["category_name"]) . '</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>';
+                        echo '<div class="col event-card"
+    data-date="' . $event_date->format('Y-m-d') . '"
+    data-timestamp="' . $event_timestamp . '"
+    data-year="' . $event_year . '"
+    data-month="' . $event_month . '"
+    data-week="' . $event_week . '"
+    data-category="' . $row["category_id"] . '"
+    data-title="' . strtolower(htmlspecialchars($row["title"])) . '"
+    data-description="' . strtolower(htmlspecialchars($row["description"])) . '"
+    data-location="' . strtolower(htmlspecialchars($row["location"])) . '">';
+echo '<a href="event_page.php?id=' . $row["event_id"] . '" class="event-link">';
+echo '<div class="card shadow-sm hover-effect rounded-4 overflow-hidden">';
+echo '<div class="card-img-container" style="height: 225px; overflow: hidden;">';
+
+// Image logic
+$image_path = '../images/uploads/events/' . ($row["event_image"] ? $row["event_image"] : 'placeholder_event.jpg');
+if ($row["event_image"] && file_exists($image_path)) {
+    echo '<img src="' . $image_path . '" class="card-img-top rounded-top-4" alt="' . htmlspecialchars($row["title"]) . '">';
+} else {
+    echo '<img src="../images/placeholder_event.jpg" class="card-img-top rounded-top-4" alt="' . htmlspecialchars($row["title"]) . '">';
+}
+
+echo '</div>';
+echo '<div class="card-body">';
+echo '<div class="row">';
+echo '<div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">';
+echo '<b class="bi bi-info-circle fs-5 date">' . $month . '</b>';
+echo '<span class="fs-1 fw-bold">' . $day . '</span>';
+echo '</div>';
+echo '<div class="col-10">';
+echo '<p><b>' . htmlspecialchars($row["title"]) . '</b></p>';
+echo '<p class="card-text">' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '</p>';
+echo '<div class="d-flex justify-content-between align-items-center">';
+echo '<small class="text-muted">Location: ' . htmlspecialchars($row["location"]) . '</small>';
+echo '<small class="text-muted">' . htmlspecialchars($row["category_name"]) . '</small>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</a>';
+echo '</div>';
                     }
                 } else {
                     echo "<p class='text-center w-100'>No events found</p>";

@@ -6,6 +6,8 @@
     <title>About Eventify</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -27,6 +29,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
         .top-header .logo {
+            font-family: "Anton SC", serif;
             font-size: 28px;
             font-weight: 800;
             color: #ffffff;
@@ -128,16 +131,25 @@
     </style>
 </head>
 <body>
-    <div class="top-header">
-        <a href="/" class="logo">Eventify</a>
-        <ul class="nav">
-            
-            <li><a href="../index.php">Home</a></li>
-            <li><a href="event_page.php">Events</a></li>
-            <li><a href="about.php">About</a></li>
+<div class="top-header">
+    <a href="/" class="logo">Eventify</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <?php if (isset($_SESSION['role']) && ($_SESSION['role'] == 'organizer' || $_SESSION['role'] == 'admin')): ?>
+                <li><a href="manage_event.php">Manage Events</a></li>
+            <?php endif; ?>
+            <li><a href="profile.php">My Profile</a></li>
+      
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
             <li><a href="login.php">Login</a></li>
-        </ul>
-    </div>
+        <?php endif; ?>
+    </ul>
+</div>
 
     <header class="main-header">
         <h1>About Us</h1>
