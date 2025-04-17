@@ -536,7 +536,6 @@ $conn->close();
                 <ul class="profile-nav">
                     <li><a href="#" class="active" onclick="showTab('personal-info'); return false;">Personal Information</a></li>
                     <li><a href="#" onclick="showTab('my-events'); return false;">My Events</a></li>
-                    <li><a href="#" onclick="showTab('tickets'); return false;">My Tickets</a></li>
                     <li><a href="#" onclick="showTab('password'); return false;">Change Password</a></li>
                 </ul>
             </div>
@@ -688,42 +687,13 @@ $conn->close();
                                     <strong>Location:</strong> <?php echo htmlspecialchars($event['location']); ?>
                                 </div>
                                 <p><?php echo nl2br(htmlspecialchars(substr($event['description'], 0, 150))); ?>...</p>
-                                <a href="event_details.php?id=<?php echo $event['event_id']; ?>" class="btn">View Details</a>
+                                <a href="event_page.php?id=<?php echo $event['event_id']; ?>" class="btn">View Details</a>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <p>You haven't registered for any events yet.</p>
                     <?php endif; ?>
                 </div>
-                
-                <div id="tickets" class="tab-content">
-                    <div class="profile-header">
-                        <h1>My Tickets</h1>
-                        <p>Manage your event tickets</p>
-                    </div>
-                    
-                    <?php if (count($tickets) > 0): ?>
-                        <?php foreach ($tickets as $ticket): ?>
-                            <div class="ticket-card">
-                                <h3><?php echo htmlspecialchars($ticket['event_title']); ?></h3>
-                                <div class="ticket-details">
-                                    <strong>Ticket Type:</strong> <?php echo htmlspecialchars($ticket['ticket_type']); ?>
-                                </div>
-                                <div class="ticket-details">
-                                    <strong>Price:</strong> $<?php echo number_format($ticket['price'], 2); ?>
-                                </div>
-                                <div class="ticket-details">
-                                    <strong>Purchase Date:</strong> <?php echo date('F j, Y', strtotime($ticket['purchase_date'])); ?>
-                                </div>
-                                <div class="ticket-status <?php echo $ticket['status']; ?>">
-                                    <strong>Status:</strong> <?php echo ucfirst($ticket['status']); ?>
-                                </div>
-                                <a href="ticket_details.php?id=<?php echo $ticket['ticket_id']; ?>" class="btn">View Ticket</a>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>You don't have any tickets yet.</p>
-                    <?php endif; ?>
                 </div>
             </div>
         </div>

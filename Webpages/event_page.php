@@ -83,7 +83,20 @@ session_start();
 $is_logged_in = isset($_SESSION['user_id']);
 $current_user_id = $is_logged_in ? $_SESSION['user_id'] : 0;
 
+// Check if user is registered for this event
+$is_registered = false;
+if ($is_logged_in) {
+    $sql_registration = "SELECT COUNT(*) as count FROM EventRegistrations 
+                WHERE user_id = ? AND event_id = ?";
+    $stmt_registration = $conn->prepare($sql_registration);
+    $stmt_registration->bind_param("ii", $current_user_id, $event_id);
+    $stmt_registration->execute();
+    $registration_result = $stmt_registration->get_result();
+    $registration_data = $registration_result->fetch_assoc();
+    $is_registered = ($registration_data['count'] > 0);
+}
 // Check if the user has attended this event
+$has_reviewed = false;
 $has_attended = false;
 if ($is_logged_in) {
     $sql_attendance = "SELECT COUNT(*) as count FROM EventRegistrations 
@@ -127,14 +140,15 @@ function truncateText($text, $length) {
 }
 
 function displayStarRating($rating) {
-    $output = '';
+    $output = '<div class="review-stars">'; // Different class name
     for ($i = 1; $i <= 5; $i++) {
         if ($i <= $rating) {
-            $output .= '<i class="bi bi-star-fill text-warning"></i>';
+            $output .= '<i class="fa fa-star text-warning"></i>';
         } else {
-            $output .= '<i class="bi bi-star text-warning"></i>';
+            $output .= '<i class="fa fa-star-o text-warning"></i>';
         }
     }
+    $output .= '</div>';
     return $output;
 }
 
@@ -156,6 +170,47 @@ function formatReviewDate($date) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton+SC&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+        .top-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: linear-gradient(90deg, #4e1c89, #5e2ced);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .top-header .logo {
+            font-size: 28px;
+            text-decoration: none;
+            font-family: "Anton SC", serif;
+            font-weight: 400;
+            font-style: normal;
+            color: white;
+
+        }
+        .top-header .nav {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .top-header .nav a {
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #ffffff;
+            padding: 8px 18px;
+            border: 2px solid #ffffff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        .top-header .nav a:hover {
+            background-color: #ffffff;
+            color: #5e2ced;
+        }
+
         .hero-section {
             background-color: #6c5ce7;
             color: white;
@@ -238,6 +293,9 @@ function formatReviewDate($date) {
         
         .rating-container {
             font-size: 1.5rem;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
         }
         
         .rating-input {
@@ -388,6 +446,7 @@ function formatReviewDate($date) {
 }
 
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .event-content-layout {
@@ -406,36 +465,21 @@ function formatReviewDate($date) {
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="../index.php">Eventify</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="event-dashboard.php">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="search_events.php">Events</a>
-                    </li>
-                    <?php if ($is_logged_in): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="profile.php">My Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                    <?php endif; ?>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div class="top-header">
+    <a href="../index.php" class="logo">EVENTIFY</a>
+    <ul class="nav">
+        <li><a href="../index.php">Home</a></li>
+        <li><a href="event_page.php">Events</a></li>
+        <li><a href="event-dashboard.php">Dashboard</a></li>
+        <li><a href="about.php">About</a></li>
+        <?php if (isset($_SESSION['user_id'])): ?>
+            <li><a href="profile.php">My Profile</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        <?php else: ?>
+            <li><a href="login.php">Login</a></li>
+        <?php endif; ?>
+    </ul>
+</div>
 
     <!-- Hero Section -->
     <section class="hero-section text-center event-hero" style="background-image: url('../images/uploads/events/<?php echo $event['banner_image']; ?>');">
@@ -530,11 +574,15 @@ function formatReviewDate($date) {
         
                             <div class="d-grid mb-3 register-button-container">
                                 <?php if ($is_logged_in): ?>
-                                    <form action="process_registration.php" method="post">
-                                        <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
-                                        <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
-                                        <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
-                                    </form>
+                                    <?php if ($is_registered): ?>
+                                        <button type="button" class="btn btn-lg" disabled style="background-color: white; color: #6c5ce7; border-color: #6c5ce7;">Registered</button>
+                                    <?php else: ?>
+                                        <form action="process_registration.php" method="post">
+                                            <input type="hidden" name="event_id" value="<?php echo $event['event_id']; ?>">
+                                            <input type="hidden" name="redirect" value="event_page.php?id=<?php echo $event['event_id']; ?>">
+                                            <button type="submit" class="btn btn-lg primary-btn text-white">Register Now</button>
+                                        </form>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <a href="login.php?redirect=event_page.php?id=<?php echo $event['event_id']; ?>" class="btn btn-lg primary-btn text-white">Login to Register</a>
                                 <?php endif; ?>
@@ -556,11 +604,7 @@ function formatReviewDate($date) {
                                     <h5 class="mb-1"><?php echo htmlspecialchars($event['organizer_name']); ?></h5>
                                     <p class="text-muted mb-0 small">Event Organizer</p>
                                 </div>
-                            </div>
-                            <hr>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#contactOrganizerModal">Contact Organizer</button>
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 </div>
@@ -590,7 +634,7 @@ function formatReviewDate($date) {
                             <div class="card review-card mb-3">
                                 <div class="card-body">
                                     <div class="d-flex mb-3">
-                                        <img src="..images/uploads/profile_images/user_<?php echo $review['user_id']; ?>.jpg" 
+                                        <img src="../images/uploads/profile_images/user_<?php echo $review['user_id']; ?>.jpg" 
                                              onerror="this.src='../images/default-pfp.png'" 
                                              alt="<?php echo htmlspecialchars($review['reviewer_name']); ?>" 
                                              class="review-avatar me-3">
@@ -613,7 +657,7 @@ function formatReviewDate($date) {
                         <?php endif; ?>
                         
                         <!-- Review Form -->
-                        <?php if ($is_logged_in && $has_attended && !isset($has_reviewed)): ?>
+                        <?php if ($is_logged_in && $has_attended && !$has_reviewed): ?>
                         <div class="card mt-4">
                             <div class="card-header bg-light">
                                 <h5 class="mb-0">Share your experience</h5>
@@ -624,21 +668,22 @@ function formatReviewDate($date) {
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Rating</label>
-                                        <div class="rating-container">
-                                            <input type="radio" id="star5" name="rating" value="5" class="rating-input">
-                                            <label for="star5" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                        <div class="rating-container" style="display: flex; flex-direction: row-reverse; justify-content: flex-end;">
+                                            <!-- Note the values now match the visual order -->
+                                            <input type="radio" id="star5" name="rating" value="1" class="rating-input">
+                                            <label for="star5" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star4" name="rating" value="4" class="rating-input">
-                                            <label for="star4" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star4" name="rating" value="2" class="rating-input">
+                                            <label for="star4" class="rating-label"><i class="fa fa-star"></i></label>
                                             
                                             <input type="radio" id="star3" name="rating" value="3" class="rating-input">
-                                            <label for="star3" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <label for="star3" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star2" name="rating" value="2" class="rating-input">
-                                            <label for="star2" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star2" name="rating" value="4" class="rating-input">
+                                            <label for="star2" class="rating-label"><i class="fa fa-star"></i></label>
                                             
-                                            <input type="radio" id="star1" name="rating" value="1" class="rating-input">
-                                            <label for="star1" class="rating-label"><i class="bi bi-star-fill"></i></label>
+                                            <input type="radio" id="star1" name="rating" value="5" class="rating-input">
+                                            <label for="star1" class="rating-label"><i class="fa fa-star"></i></label>
                                         </div>
                                     </div>
                                     
@@ -651,7 +696,7 @@ function formatReviewDate($date) {
                                 </form>
                             </div>
                         </div>
-                        <?php elseif ($is_logged_in && isset($has_reviewed) && $has_reviewed): ?>
+                        <?php elseif ($is_logged_in && $has_reviewed): ?>
                         <div class="alert alert-success mt-4">
                             <i class="bi bi-check-circle me-2"></i>Thank you for reviewing this event!
                         </div>
@@ -663,7 +708,7 @@ function formatReviewDate($date) {
                         <div class="card mt-4">
                             <div class="card-body text-center">
                                 <p class="mb-2">Want to share your experience?</p>
-                                <a href="login.php?redirect=event.php?id=<?php echo $event_id; ?>" class="btn btn-outline-primary">Login to Leave a Review</a>
+                                <a href="login.php?redirect=event_page.php?id=<?php echo $event_id; ?>" class="btn btn-outline-primary">Login to Leave a Review</a>
                             </div>
                         </div>
                         <?php endif; ?>
@@ -719,24 +764,7 @@ function formatReviewDate($date) {
                             </div>
                         </div>
                     </div>
-                    
-                    <?php if (!isset($_SESSION['user_id'])): ?>
-                    <div class="text-center">
-                        <p>Don't see the answer you're looking for? Ask a question</p>
-                        <form action="submit_question.php" method="post">
-                            <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
-                            <div class="form-floating mb-3">
-                                <textarea class="form-control" id="questionTextarea" name="question" style="height: 100px" required></textarea>
-                                <label for="questionTextarea">Your question</label>
-                            </div>
-                            <button type="submit" class="btn primary-btn text-white">Submit Question</button>
-                        </form>
-                    </div>
-                    <?php else: ?>
-                    <div class="text-center">
-                        <p>Please <a href="login.php">login</a> to ask questions about this event.</p>
-                    </div>
-                    <?php endif; ?>
+            
                 </div>
             </div>
         </section>
@@ -764,7 +792,7 @@ function formatReviewDate($date) {
                             </div>
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
-                            <a href="event.php?id=<?php echo $rel_event['event_id']; ?>" class="btn btn-outline-primary w-100">View Details</a>
+                            <a href="event_page.php?id=<?php echo $rel_event['event_id']; ?>" class="btn btn-outline-primary w-100">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -811,47 +839,6 @@ function formatReviewDate($date) {
         </div>
     </footer>
 
-    <!-- Contact Organizer Modal -->
-    <div class="modal fade" id="contactOrganizerModal" tabindex="-1" aria-labelledby="contactOrganizerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactOrganizerModalLabel">Contact <?php echo htmlspecialchars($event['organizer_name']); ?></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="send_message.php" method="post">
-                        <input type="hidden" name="organizer_id" value="<?php echo $event['organizer_id']; ?>">
-                        <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
-                        
-                        <div class="mb-3">
-                            <label for="message-subject" class="form-label">Subject</label>
-                            <input type="text" class="form-control" id="message-subject" name="subject" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-text" class="form-label">Message</label>
-                            <textarea class="form-control" id="message-text" name="message" rows="5" required></textarea>
-                        </div>
-                        
-                        <?php if (!$is_logged_in): ?>
-                        <div class="mb-3">
-                            <label for="message-name" class="form-label">Your Name</label>
-                            <input type="text" class="form-control" id="message-name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message-email" class="form-label">Your Email</label>
-                            <input type="email" class="form-control" id="message-email" name="email" required>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <div class="d-grid">
-                            <button type="submit" class="btn primary-btn text-white">Send Message</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
@@ -860,17 +847,22 @@ function formatReviewDate($date) {
     <script>
         // Reverse the star rating labels to show in the correct order
         document.addEventListener('DOMContentLoaded', function() {
-            const ratingContainer = document.querySelector('.rating-container');
+            const ratingContainer = document.querySelector('form .rating-container');
             if (ratingContainer) {
-                const stars = Array.from(ratingContainer.querySelectorAll('.rating-label'));
-                stars.reverse();
+                // Store all elements before clearing
+                const inputs = Array.from(ratingContainer.querySelectorAll('.rating-input'));
+                const labels = Array.from(ratingContainer.querySelectorAll('.rating-label'));
                 
-                // Adjust the display to show in reverse order
+                // Reverse the arrays
+                inputs.reverse();
+                labels.reverse();
+                
+                // Clear and rebuild
                 ratingContainer.innerHTML = '';
-                stars.forEach(star => {
-                    ratingContainer.appendChild(star.previousElementSibling); // Add input
-                    ratingContainer.appendChild(star); // Add label
-                });
+                for (let i = 0; i < inputs.length; i++) {
+                    ratingContainer.appendChild(inputs[i]);
+                    ratingContainer.appendChild(labels[i]);
+                }
             }
         });
 
@@ -910,6 +902,7 @@ $stmt->close();
 $stmt_reg->close();
 $stmt_reviews->close();
 $stmt_related->close();
+if (isset($stmt_registration)) $stmt_registration->close();
 if (isset($stmt_attendance)) $stmt_attendance->close();
 if (isset($stmt_user_review)) $stmt_user_review->close();
 $conn->close();
