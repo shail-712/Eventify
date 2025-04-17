@@ -1,4 +1,3 @@
-
 <?php
 // search_events.php
 include '../config/database.php';
@@ -115,7 +114,7 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <div class="card shadow-sm rounded-4">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <div class="input-group">
                                     <span class="input-group-text bg-white border-end-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
@@ -151,7 +150,11 @@ $is_logged_in = isset($_SESSION['user_id']);
                                     ?>
                                 </select>
                             </div>
-                            
+                            <div class="col-md-2">
+                                <button id="search-button" class="btn btn-primary w-100" style="background-color: #5e2ced; border-color: #5e2ced;">
+                                    Search
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -253,12 +256,14 @@ echo '</div>';
         // Add event listeners to filters
         timeFilter.addEventListener('change', filterEvents);
         categoryFilter.addEventListener('change', filterEvents);
-        searchButton.addEventListener('click', filterEvents);
         searchInput.addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
                 filterEvents();
             }
         });
+        
+        // Add event listener to search button
+        searchButton.addEventListener('click', filterEvents);
         
         function filterEvents() {
             const selectedTime = timeFilter.value;

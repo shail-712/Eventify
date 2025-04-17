@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('database.php');
+include('../config/database.php');
 
 // Ensure user is logged in and event ID is provided
 if (!isset($_SESSION['user_id']) || !isset($_POST['event_id'])) {

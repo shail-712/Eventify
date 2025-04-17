@@ -159,20 +159,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 // Define the categories
-$predefined_categories = [
-    ['category_id' => 1, 'category_name' => 'Music'],
-    ['category_id' => 2, 'category_name' => 'Sports'],
-    ['category_id' => 3, 'category_name' => 'Workshop'],
-    ['category_id' => 4, 'category_name' => 'Conference'],
-    ['category_id' => 5, 'category_name' => 'Festival']
-];
+
 
 // Use the predefined categories instead of fetching from database
 // Alternatively, you could insert these categories into the database first
-$categories = $predefined_categories;
-
 // If you still want to fetch from database, uncomment the below code
-/*
+
 $categories = [];
 $result = $conn->query("SELECT category_id, category_name FROM EventCategories");
 if ($result->num_rows > 0) {
@@ -180,7 +172,6 @@ if ($result->num_rows > 0) {
         $categories[] = $row;
     }
 }
-*/
 ?>
 
 <!DOCTYPE html>

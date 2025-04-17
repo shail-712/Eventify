@@ -106,34 +106,40 @@ $result = $conn->query($sql);
                 $day = $event_date->format('d');
                 
                 // Generate event card
-                echo '
-                <div class="col">
-                    <div class="col">
-    <a href="Webpages/event_page.php?id=' . $row["event_id"] . '" class="event-link">
-        <div class="card shadow-sm hover-effect rounded-4 overflow-hidden">
-            <svg class="bd-placeholder-img card-img-top rounded-top-4" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' . htmlspecialchars($row["title"]) . '" preserveAspectRatio="xMidYMid slice" focusable="false">
-                <title>' . htmlspecialchars($row["title"]) . '</title>
-                <rect width="100%" height="100%" fill="#55595c"></rect>
-                <text x="50%" y="50%" fill="#eceeef" dy=".3em">' . htmlspecialchars($row["title"]) . '</text>
-            </svg>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">
-                        <b class="bi bi-info-circle fs-5 date">' . $month . '</b>
-                        <span class="fs-1 fw-bold">' . $day . '</span>
-                    </div>
-                    <div class="col-10">
-                        <p><b>' . htmlspecialchars($row["title"]) . '</b></p>
-                        <p class="card-text">
-                            ' . htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '') . '
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </a>
-</div>
-                </div>';
+               // Break the code into multiple echo statements
+echo '<div class="col">';
+echo '<div class="col">';
+echo '<a href="Webpages/event_page.php?id=' . $row["event_id"] . '" class="event-link">';
+echo '<div class="card shadow-sm hover-effect rounded-4 overflow-hidden">';
+
+// Image functionality
+echo '<div class="card-img-container" style="height: 225px; overflow: hidden;">';
+$image_path = 'images/uploads/events/' . ($row["event_image"] ? $row["event_image"] : 'placeholder_event.jpg');
+if ($row["event_image"] && file_exists($image_path)) {
+    echo '<img src="' . $image_path . '" class="card-img-top rounded-top-4" alt="' . htmlspecialchars($row["title"]) . '">';
+} else {
+    echo '<img src="images/placeholder_event.jpg" class="card-img-top rounded-top-4" alt="' . htmlspecialchars($row["title"]) . '">';
+}
+echo '</div>';
+
+echo '<div class="card-body">';
+echo '<div class="row">';
+echo '<div class="col-2 d-flex flex-column flex-wrap align-items-center text-center">';
+echo '<b class="bi bi-info-circle fs-5 date">' . $month . '</b>';
+echo '<span class="fs-1 fw-bold">' . $day . '</span>';
+echo '</div>';
+echo '<div class="col-10">';
+echo '<p><b>' . htmlspecialchars($row["title"]) . '</b></p>';
+echo '<p class="card-text">';
+echo htmlspecialchars(substr($row["description"], 0, 100)) . (strlen($row["description"]) > 100 ? '...' : '');
+echo '</p>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</div>';
+echo '</a>';
+echo '</div>';
+echo '</div>';
             }
         } else {
             echo "<p class='text-center w-100'>No events found</p>";
