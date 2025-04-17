@@ -808,36 +808,12 @@ function formatReviewDate($date) {
     </div>
     
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <h5>Event Platform</h5>
-                    <p class="text-muted">Find and register for events that match your interests</p>
-                </div>
-                <div class="col-md-3 mb-3 mb-md-0">
-                    <h5>Quick Links</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a href="index.php" class="nav-link text-muted p-0 mb-2">Home</a></li>
-                        <li class="nav-item"><a href="events.php" class="nav-link text-muted p-0 mb-2">Events</a></li>
-                        <li class="nav-item"><a href="categories.php" class="nav-link text-muted p-0 mb-2">Categories</a></li>
-                        <li class="nav-item"><a href="contact.php" class="nav-link text-muted p-0">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-3">
-                    <h5>Contact</h5>
-                    <ul class="nav flex-column">
-                        <li class="nav-item text-muted mb-2"><i class="bi bi-envelope me-2"></i>info@eventplatform.com</li>
-                        <li class="nav-item text-muted"><i class="bi bi-telephone me-2"></i>+1 234 567 8900</li>
-                    </ul>
-                </div>
-            </div>
-            <hr class="my-4">
-            <div class="text-center text-muted">
-                <p>&copy; 2025 Event Platform. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <footer style="background-color: #5e2ced; color: white; padding: 30px; margin-top: 60px; text-align: center;">
+  <h3 style="margin-bottom: 10px;">Contact Us</h3>
+  <p>Email: support@eventify.com</p>
+  <p>Phone: +91-98765-43210</p>
+  <p>Address: Ghatkopar, Mumbai, India</p>
+</footer>
 
 
     <!-- Bootstrap JS Bundle with Popper -->
